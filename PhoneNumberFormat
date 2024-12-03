@@ -1,0 +1,27 @@
+import java.util.Scanner;
+public class Main {
+	public static void main(String[] args) {
+		Scanner in = new Scanner(System.in);
+		String nyaur = "999";
+		String hehe = String.valueOf(nyaur);
+		String Number;
+		while(true){
+		System.out.print("Enter 10 digits:  ");
+		Number = in.nextLine();
+		if (Number.equals(hehe)){
+			System.out.println("Bye!!!");
+			break;
+		} else {
+			if(Number.length()  == 10){
+				String first = Number.substring(0,3);
+				String second =  Number.substring(3,7);
+				String third = Number.substring(7,10);
+				String Whole = ("(" + first + ") " + second  +  "-" + third);
+				System.out.println("Number: " +Whole);
+			} else {
+				System.out.println("Please enter 10 digits only.");
+			}
+		}
+		}
+	}
+}
