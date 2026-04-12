@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Film, Media & Theater Arts Quiz</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --rose: #e8547a;
+    --blush: #f7c5d5;
+    --cream: #fff5f8;
+    --soft: #fde8ef;
+    --dark: #2a1220;
+    --mid: #8b3a57;
+    --accent: #c9264f;
+    --gold: #e8a87c;
+    --correct: #4caf50;
+    --wrong: #e53935;
+    --card: #fffafb;
+    --shadow: rgba(200,80,120,0.15);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--cream);
+    font-family: 'DM Sans', sans-serif;
+    color: var(--dark);
+    min-height: 100vh;
+    background-image:
+      radial-gradient(circle at 10% 20%, rgba(232,84,122,0.08) 0%, transparent 50%),
+      radial-gradient(circle at 90% 80%, rgba(249,197,213,0.3) 0%, transparent 50%),
+      radial-gradient(circle at 50% 50%, rgba(255,245,248,1) 0%, transparent 100%);
+  }
+
+  /* ---- DECORATIVE STARS ---- */
+  .star {
+    position: fixed; pointer-events: none; z-index: 0;
+    font-size: 18px; opacity: 0.18; animation: twinkle 3s ease-in-out infinite;
+  }
+  .star:nth-child(1){ top:5%; left:3%; animation-delay:0s; }
+  .star:nth-child(2){ top:15%; left:92%; animation-delay:.8s; }
+  .star:nth-child(3){ top:70%; left:2%; animation-delay:1.5s; }
+  .star:nth-child(4){ top:85%; left:90%; animation-delay:.3s; }
+  .star:nth-child(5){ top:45%; left:97%; animation-delay:2s; }
+  @keyframes twinkle { 0%,100%{opacity:.1;transform:scale(1)} 50%{opacity:.35;transform:scale(1.3)} }
+
+  /* ---- SCREENS ---- */
+  .screen { display:none; min-height:100vh; position:relative; z-index:1; }
+  .screen.active { display:flex; flex-direction:column; align-items:center; justify-content:center; padding:24px; }
+
+  /* ---- WELCOME ---- */
+  #welcome {
+    text-align:center;
+    gap:28px;
+  }
+  .welcome-badge {
+    background: linear-gradient(135deg, var(--rose), var(--mid));
+    color:#fff;
+    font-size:12px;
+    font-weight:500;
+    letter-spacing:2px;
+    text-transform:uppercase;
+    padding:6px 18px;
+    border-radius:99px;
+    display:inline-block;
+  }
+  .welcome-title {
+    font-family:'Playfair Display', serif;
+    font-size:clamp(2.2rem,6vw,4rem);
+    font-weight:900;
+    line-height:1.1;
+    color:var(--dark);
+  }
+  .welcome-title span { color:var(--rose); }
+  .welcome-sub {
+    font-size:1rem;
+    color:var(--mid);
+    max-width:480px;
+    line-height:1.6;
+  }
+  .week-pills {
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+    justify-content:center;
+  }
+  .pill {
+    background:var(--soft);
+    border:1.5px solid var(--blush);
+    color:var(--mid);
+    font-size:13px;
+    font-weight:500;
+    padding:6px 16px;
+    border-radius:99px;
+  }
+  .btn-start {
+    background: linear-gradient(135deg, var(--rose) 0%, var(--accent) 100%);
+    color:#fff;
+    border:none;
+    padding:16px 48px;
+    border-radius:99px;
+    font-size:1.05rem;
+    font-weight:600;
+    cursor:pointer;
+    box-shadow:0 8px 24px rgba(200,38,79,0.3);
+    transition:transform .2s, box-shadow .2s;
+    font-family:'DM Sans',sans-serif;
+    letter-spacing:.5px;
+  }
+  .btn-start:hover { transform:translateY(-2px); box-shadow:0 12px 32px rgba(200,38,79,0.4); }
+
+  /* ---- QUIZ ---- */
+  #quiz { padding:20px 16px 40px; gap:0; justify-content:flex-start; }
+
+  .quiz-header {
+    width:100%; max-width:760px;
+    display:flex; align-items:center;
+    justify-content:space-between;
+    margin-bottom:20px;
+    padding:0 4px;
+  }
+  .q-counter {
+    font-family:'Playfair Display',serif;
+    font-size:1rem;
+    font-weight:700;
+    color:var(--mid);
+  }
+  .q-score-live {
+    font-size:.88rem;
+    font-weight:500;
+    color:var(--mid);
+    background:var(--soft);
+    padding:5px 14px;
+    border-radius:99px;
+    border:1px solid var(--blush);
+  }
+
+  .progress-bar {
+    width:100%; max-width:760px;
+    height:7px;
+    background:var(--blush);
+    border-radius:99px;
+    margin-bottom:28px;
+    overflow:hidden;
+  }
+  .progress-fill {
+    height:100%;
+    background:linear-gradient(90deg, var(--rose), var(--gold));
+    border-radius:99px;
+    transition:width .4s cubic-bezier(.4,0,.2,1);
+  }
+
+  .q-card {
+    background:var(--card);
+    border:1.5px solid var(--blush);
+    border-radius:22px;
+    padding:32px 36px;
+    width:100%;
+    max-width:760px;
+    box-shadow:0 4px 28px var(--shadow);
+    animation:slideUp .35s cubic-bezier(.4,0,.2,1);
+  }
+  @keyframes slideUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+
+  .q-number {
+    font-size:.8rem;
+    font-weight:600;
+    color:var(--rose);
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+    margin-bottom:12px;
+  }
+  .q-text {
+    font-family:'Playfair Display',serif;
+    font-size:1.22rem;
+    font-weight:700;
+    line-height:1.45;
+    color:var(--dark);
+    margin-bottom:24px;
+  }
+
+  .options { display:flex; flex-direction:column; gap:11px; }
+  .option-btn {
+    background:#fff;
+    border:1.5px solid #ecd9e2;
+    border-radius:13px;
+    padding:14px 20px;
+    font-size:.95rem;
+    font-weight:400;
+    color:var(--dark);
+    text-align:left;
+    cursor:pointer;
+    transition:border-color .2s, background .2s, transform .15s;
+    font-family:'DM Sans',sans-serif;
+    line-height:1.4;
+    display:flex;
+    align-items:center;
+    gap:14px;
+  }
+  .option-btn:hover:not(:disabled) {
+    border-color:var(--rose);
+    background:var(--soft);
+    transform:translateX(4px);
+  }
+  .option-letter {
+    min-width:28px; height:28px;
+    background:var(--soft);
+    border-radius:8px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:.78rem;
+    font-weight:700;
+    color:var(--rose);
+    flex-shrink:0;
+    transition:background .2s, color .2s;
+  }
+  .option-btn.correct { background:#e8f5e9; border-color:var(--correct); }
+  .option-btn.correct .option-letter { background:var(--correct); color:#fff; }
+  .option-btn.wrong { background:#ffebee; border-color:var(--wrong); }
+  .option-btn.wrong .option-letter { background:var(--wrong); color:#fff; }
+  .option-btn:disabled { cursor:default; }
+
+  .explanation-box {
+    margin-top:20px;
+    background:linear-gradient(135deg, #fff5f8, #fce4ec);
+    border:1.5px solid var(--blush);
+    border-radius:14px;
+    padding:16px 20px;
+    display:none;
+    animation:fadeIn .3s ease;
+  }
+  @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+  .explanation-box .label {
+    font-size:.75rem;
+    font-weight:700;
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+    color:var(--rose);
+    margin-bottom:6px;
+  }
+  .explanation-box p {
+    font-size:.92rem;
+    line-height:1.6;
+    color:var(--dark);
+  }
+  .result-tag {
+    display:inline-block;
+    padding:4px 14px;
+    border-radius:99px;
+    font-size:.8rem;
+    font-weight:700;
+    margin-bottom:10px;
+  }
+  .result-tag.c { background:#e8f5e9; color:var(--correct); }
+  .result-tag.w { background:#ffebee; color:var(--wrong); }
+
+  .btn-next {
+    margin-top:22px;
+    background:linear-gradient(135deg,var(--rose),var(--accent));
+    color:#fff;
+    border:none;
+    padding:13px 36px;
+    border-radius:99px;
+    font-size:.95rem;
+    font-weight:600;
+    cursor:pointer;
+    font-family:'DM Sans',sans-serif;
+    box-shadow:0 4px 16px rgba(200,38,79,0.25);
+    transition:transform .2s, box-shadow .2s;
+    display:none;
+  }
+  .btn-next:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(200,38,79,0.4); }
+
+  /* ---- RESULTS ---- */
+  #results {
+    gap:0;
+    justify-content:flex-start;
+    padding:32px 16px 60px;
+    align-items:center;
+  }
+  .results-header {
+    text-align:center;
+    margin-bottom:32px;
+    max-width:680px;
+  }
+  .score-circle {
+    width:130px; height:130px;
+    border-radius:50%;
+    background:linear-gradient(135deg,var(--rose),var(--accent));
+    display:flex; flex-direction:column;
+    align-items:center; justify-content:center;
+    margin:0 auto 20px;
+    box-shadow:0 8px 32px rgba(200,38,79,0.3);
+  }
+  .score-num {
+    font-family:'Playfair Display',serif;
+    font-size:2.4rem;
+    font-weight:900;
+    color:#fff;
+    line-height:1;
+  }
+  .score-label { font-size:.75rem; color:rgba(255,255,255,.85); font-weight:500; }
+  .results-title {
+    font-family:'Playfair Display',serif;
+    font-size:1.9rem;
+    font-weight:900;
+    color:var(--dark);
+    margin-bottom:8px;
+  }
+  .results-subtitle { font-size:.95rem; color:var(--mid); }
+
+  .results-stats {
+    display:flex; gap:12px; flex-wrap:wrap;
+    justify-content:center;
+    margin-bottom:28px;
+  }
+  .stat-pill {
+    padding:10px 20px;
+    border-radius:99px;
+    font-size:.88rem;
+    font-weight:600;
+    border:1.5px solid;
+  }
+  .stat-pill.green { background:#e8f5e9; border-color:#a5d6a7; color:#2e7d32; }
+  .stat-pill.red   { background:#ffebee; border-color:#ef9a9a; color:#c62828; }
+  .stat-pill.blue  { background:#e3f2fd; border-color:#90caf9; color:#1565c0; }
+
+  .btn-restart {
+    background:linear-gradient(135deg,var(--rose),var(--accent));
+    color:#fff; border:none;
+    padding:14px 40px;
+    border-radius:99px;
+    font-size:1rem;
+    font-weight:600;
+    cursor:pointer;
+    font-family:'DM Sans',sans-serif;
+    box-shadow:0 6px 20px rgba(200,38,79,0.3);
+    transition:transform .2s, box-shadow .2s;
+    margin-bottom:36px;
+  }
+  .btn-restart:hover { transform:translateY(-2px); box-shadow:0 10px 28px rgba(200,38,79,0.4); }
+
+  .review-section { width:100%; max-width:760px; }
+  .review-title {
+    font-family:'Playfair Display',serif;
+    font-size:1.3rem;
+    font-weight:700;
+    color:var(--dark);
+    margin-bottom:16px;
+    text-align:center;
+  }
+  .review-card {
+    background:var(--card);
+    border:1.5px solid var(--blush);
+    border-radius:16px;
+    padding:20px 24px;
+    margin-bottom:14px;
+    box-shadow:0 2px 12px var(--shadow);
+  }
+  .review-card.r-correct { border-color:#a5d6a7; }
+  .review-card.r-wrong   { border-color:#ef9a9a; }
+  .review-q-num {
+    font-size:.75rem; font-weight:700; letter-spacing:1px;
+    text-transform:uppercase; color:var(--rose); margin-bottom:6px;
+  }
+  .review-q-text {
+    font-family:'Playfair Display',serif;
+    font-size:1rem; font-weight:700;
+    line-height:1.4; color:var(--dark);
+    margin-bottom:10px;
+  }
+  .review-answer {
+    font-size:.88rem; font-weight:500;
+    padding:6px 14px;
+    border-radius:8px;
+    display:inline-block;
+    margin-bottom:8px;
+  }
+  .review-answer.correct { background:#e8f5e9; color:#2e7d32; }
+  .review-answer.wrong-user { background:#ffebee; color:#c62828; }
+  .review-correct-ans { font-size:.88rem; color:#2e7d32; font-weight:500; margin-bottom:6px; }
+  .review-exp {
+    font-size:.85rem; line-height:1.55; color:#555;
+    background:var(--soft); border-radius:8px; padding:10px 14px;
+    margin-top:8px;
+  }
+
+  /* Filter bar */
+  .filter-bar {
+    display:flex; gap:8px; flex-wrap:wrap;
+    justify-content:center;
+    margin-bottom:20px;
+  }
+  .filter-btn {
+    padding:7px 18px; border-radius:99px;
+    font-size:.85rem; font-weight:500;
+    border:1.5px solid var(--blush);
+    background:#fff; color:var(--mid);
+    cursor:pointer; font-family:'DM Sans',sans-serif;
+    transition:background .2s, border-color .2s, color .2s;
+  }
+  .filter-btn.active { background:var(--rose); border-color:var(--rose); color:#fff; }
+
+  /* Responsive */
+  @media(max-width:540px){
+    .q-card { padding:22px 18px; }
+    .welcome-title { font-size:2rem; }
+    .q-text { font-size:1.07rem; }
+    .review-card { padding:16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Decorative stars -->
+<div class="star">✦</div>
+<div class="star">✧</div>
+<div class="star">✦</div>
+<div class="star">✧</div>
+<div class="star">✦</div>
+
+<!-- ===== WELCOME ===== -->
+<div id="welcome" class="screen active">
+  <div class="welcome-badge">Week 11–14 Reviewer</div>
+  <h1 class="welcome-title">Film, Media<br>& <span>Theater Arts</span></h1>
+  <p class="welcome-sub">150 multiple choice questions covering cinematography, storytelling, theater, performance arts, and Philippine arts culture.</p>
+  <div class="week-pills">
+    <span class="pill">📽 Film & Media Arts</span>
+    <span class="pill">🎭 Theater & Performance</span>
+    <span class="pill">🇵🇭 Philippine Arts</span>
+  </div>
+  <button class="btn-start" onclick="startQuiz()">Start Quiz ✦</button>
+</div>
+
+<!-- ===== QUIZ ===== -->
+<div id="quiz" class="screen">
+  <div class="quiz-header">
+    <div class="q-counter" id="qCounter">Question 1 of 150</div>
+    <div class="q-score-live" id="qScoreLive">Score: 0</div>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="q-card" id="qCard">
+    <div class="q-number" id="qNum">QUESTION 1</div>
+    <div class="q-text" id="qText"></div>
+    <div class="options" id="optionsEl"></div>
+    <div class="explanation-box" id="explanationBox">
+      <div class="result-tag" id="resultTag"></div>
+      <div class="label">Explanation</div>
+      <p id="expText"></p>
+    </div>
+    <button class="btn-next" id="btnNext" onclick="nextQuestion()">Next Question →</button>
+  </div>
+</div>
+
+<!-- ===== RESULTS ===== -->
+<div id="results" class="screen">
+  <div class="results-header">
+    <div class="score-circle">
+      <div class="score-num" id="scoreNum">0</div>
+      <div class="score-label">out of 150</div>
+    </div>
+    <h2 class="results-title" id="resultsTitle">Quiz Complete!</h2>
+    <p class="results-subtitle" id="resultsSubtitle"></p>
+  </div>
+  <div class="results-stats">
+    <div class="stat-pill green" id="statCorrect">✓ 0 Correct</div>
+    <div class="stat-pill red" id="statWrong">✗ 0 Wrong</div>
+    <div class="stat-pill blue" id="statPct">0% Score</div>
+  </div>
+  <button class="btn-restart" onclick="restartQuiz()">🔀 Shuffle & Restart</button>
+  <div class="review-section">
+    <div class="review-title">Full Answer Key</div>
+    <div class="filter-bar">
+      <button class="filter-btn active" onclick="filterReview('all',this)">All (150)</button>
+      <button class="filter-btn" onclick="filterReview('wrong',this)">Wrong Only</button>
+      <button class="filter-btn" onclick="filterReview('correct',this)">Correct Only</button>
+    </div>
+    <div id="reviewList"></div>
+  </div>
+</div>
+
+<script>
+const ALL_QUESTIONS = [
+  // ─── FILM AND MEDIA ARTS ───
+  {q:"What is Film and Media Arts primarily described as?",opts:["A form of storytelling that uses film, video, and digital media","A type of painting and sculpture","A branch of literature","A form of musical performance"],ans:0,exp:"Film and Media Arts is a form of storytelling that uses film, video, and digital media, combining camera work, editing, sound, and visual effects to communicate messages and emotions."},
+  {q:"Which of the following is NOT listed as an importance of Film and Media Arts?",opts:["Culture","Education","Commerce","Entertainment"],ans:2,exp:"The four importances are Culture, Education, Entertainment, and Communication — not Commerce."},
+  {q:"What does 'CULTURE' mean in the context of the importance of Film and Media Arts?",opts:["Shows traditions and real-life experiences","Helps people learn new things","Gives enjoyment and relaxation","Shares messages and information"],ans:0,exp:"Culture in Film and Media Arts means it shows traditions and real-life experiences."},
+  {q:"What does 'EDUCATION' refer to in the importance of Film and Media Arts?",opts:["Shows traditions and real-life experiences","Helps people learn new things","Gives enjoyment and relaxation","Shares messages and information"],ans:1,exp:"Education means Film and Media Arts helps people learn new things."},
+  {q:"What does 'ENTERTAINMENT' mean as an importance of Film and Media Arts?",opts:["Shows traditions and real-life experiences","Helps people learn new things","Gives enjoyment and relaxation","Shares messages and information"],ans:2,exp:"Entertainment means Film and Media Arts gives enjoyment and relaxation to its audience."},
+  {q:"What does 'COMMUNICATION' refer to in the importance of Film and Media Arts?",opts:["Shows traditions and real-life experiences","Helps people learn new things","Gives enjoyment and relaxation","Shares messages and information"],ans:3,exp:"Communication means Film and Media Arts shares messages and information with the audience."},
+  {q:"Which influence of Film and Media Arts involves raising awareness about social issues?",opts:["Shapes opinions and perspectives","Raises awareness about social issues","Influences values and behavior","Inspires creativity and action"],ans:1,exp:"One of the listed influences is that Film and Media Arts raises awareness about social issues."},
+  {q:"What is a SCRIPT in Film and Media Arts?",opts:["A camera technique used in filmmaking","A detailed outline containing dialogue, character actions, and scenes","A type of lighting setup","A sound recording method"],ans:1,exp:"A script is a detailed outline containing dialogue, character actions, and scenes used to guide performances."},
+  {q:"In which forms of media are scripts described as crucial?",opts:["Film, television, theater, and video games","Newspapers and radio only","Music and dance only","Photography and sculpture"],ans:0,exp:"Scripts are crucial in media such as film, television, theater, and even video games, serving as the foundation for storytelling and production."},
+  {q:"How is STORYTELLING defined in Film and Media Arts?",opts:["The strategic combination of visual, audio, and narrative elements to evoke emotion","The process of writing scripts for films","The technique of lighting a scene","The editing of raw footage into a final film"],ans:0,exp:"Storytelling is the strategic combination of visual, audio, and narrative elements to evoke emotion, convey meaning, and immerse the audience in a story."},
+  {q:"How many types of storytelling are mentioned in the presentation?",opts:["Two","Three","Four","Five"],ans:1,exp:"Three types of storytelling are listed: Oral, Digital, and Visual."},
+  {q:"What is ORAL storytelling?",opts:["Creating stories using digital tools","Telling a story through voice and gestures","Conveying narratives through visual elements","Writing stories in script format"],ans:1,exp:"Oral storytelling is telling a story through voice and gestures, including forms like epic poems, chants, rhymes, and songs."},
+  {q:"Which of the following is an example of oral storytelling?",opts:["Film and animation","Podcast and radio","Paintings and murals","Written novels"],ans:1,exp:"Examples of oral storytelling include podcasts and radio, as they rely on voice and sound."},
+  {q:"What is DIGITAL storytelling?",opts:["Telling a story through voice and gestures","Creating and sharing stories using digital tools incorporating multimedia elements","Conveying narratives through visual elements like camera and lighting","Writing stage plays and scripts"],ans:1,exp:"Digital storytelling involves creating and sharing stories using digital tools, incorporating multimedia elements such as image, sound, and words in a narrative that is then disseminated."},
+  {q:"What does VISUAL storytelling primarily rely on instead of dialogue?",opts:["Written narration","Camera, lighting, color, and composition","Voice and gestures","Digital tools and software only"],ans:1,exp:"Visual storytelling conveys narratives primarily through visual elements — camera, lighting, color, and composition — rather than relying solely on dialogue or narration."},
+  {q:"What is CINEMATOGRAPHY defined as?",opts:["The art and technology of motion-picture photography","The process of writing film scripts","A type of sound design","The process of creating film sets and props"],ans:0,exp:"Cinematography is the art and technology of motion-picture photography, involving collaboration between a director and a cinematographer to create a film's visual language."},
+  {q:"Who does the director collaborate with in cinematography?",opts:["The script writer","The sound engineer","The cinematographer (Director of Photography)","The costume designer"],ans:2,exp:"Cinematography involves collaboration between a director and a cinematographer (Director of Photography) to create the film's visual language."},
+  {q:"What does lighting shape in cinematography?",opts:["Mood, depth, and focus","Script dialogue and pacing","Camera movement speed","Film budget and resources"],ans:0,exp:"Lighting shapes mood, depth, and focus using direction, quality (hard/soft), intensity, and color."},
+  {q:"What are the three types in classic three-point lighting?",opts:["Key, Fill, and Backlight","Bright, Dim, and Shadow","Natural, Artificial, and Mixed","Soft, Hard, and Filtered"],ans:0,exp:"The classic three-point lighting consists of Key-Light, Fill-Light, and Backlight (Back-Light)."},
+  {q:"What is the KEY LIGHT?",opts:["A secondary light that reduces shadow density","The primary, brightest light source in cinematography","A light placed behind the subject to create a halo","A natural light source from windows"],ans:1,exp:"The Key Light is the primary, brightest light source in cinematography, used to define a subject's shape, form, and mood, typically positioned at 45 degrees."},
+  {q:"At what angle is the KEY LIGHT typically positioned?",opts:["90 degrees","180 degrees","45 degrees","30 degrees"],ans:2,exp:"The Key Light is typically positioned at 45 degrees from the subject."},
+  {q:"What is the purpose of the FILL LIGHT?",opts:["To create a halo outline effect","To reduce contrast and control shadow density","To brighten the entire scene evenly","To highlight the background only"],ans:1,exp:"The Fill Light is a usually soft, secondary light source used to reduce contrast and control the density of shadows created by the key light."},
+  {q:"What type of light is the FILL LIGHT usually described as?",opts:["Bright and primary","Soft and secondary","Harsh and directional","Colored and decorative"],ans:1,exp:"The Fill Light is described as a usually soft, secondary light source."},
+  {q:"What does BACK LIGHT create on the subject?",opts:["Deep, dramatic shadows","A bright outline or halo effect","A colored glow on the background","Lens flare effects in the camera"],ans:1,exp:"Back Light is a technique where a light source is placed behind the subject, facing the camera, to create a bright outline or 'halo' effect."},
+  {q:"What is a CLOSE-UP SHOT used for?",opts:["To show the entire scene including environment","To emphasize a character's emotions and expressions","To show a character from the waist up","To make the subject appear smaller"],ans:1,exp:"Close-up shots focus on a specific subject, usually a character's face, to emphasize emotions and expressions, creating intimacy and drawing viewer attention."},
+  {q:"What does a MEDIUM SHOT capture?",opts:["The entire scene including environment","A character's face only","A character from the waist up","A wide establishing landscape"],ans:2,exp:"Medium shots capture a character from the waist up, providing balance between showing emotions and surroundings. Also known as mid-shots, often used for dialogue scenes."},
+  {q:"What is another name for a LONG SHOT?",opts:["Close-up shot","Wide shot","High-angle shot","Medium shot"],ans:1,exp:"Long shots are also known as wide shots. They show the entire scene including characters and their environment."},
+  {q:"What effect does a HIGH-ANGLE SHOT typically create?",opts:["Makes the subject appear larger and more powerful","Makes the subject appear smaller, weaker, or more vulnerable","Creates a halo lighting effect","Shows the subject from a neutral side angle"],ans:1,exp:"High-angle shots are taken from above, looking down on the subject, making them appear smaller, weaker, or more vulnerable, showing power imbalance."},
+  {q:"What does a LOW-ANGLE SHOT convey about the subject?",opts:["Vulnerability and weakness","A sense of authority, power, or superiority","A balanced neutral perspective","Distance and isolation from others"],ans:1,exp:"Low-angle shots are taken from below looking up, making subjects appear larger and more dominant, conveying a sense of authority or superiority."},
+  {q:"What is COMPOSITION in cinematography?",opts:["The process of adding music to a film","The intentional arrangement of visual elements within the camera frame","A type of camera movement technique","The process of color grading in post-production"],ans:1,exp:"Composition is the intentional arrangement of visual elements — subjects, lighting, props, and setting — within the camera frame to tell a story, evoke emotion, and guide the viewer's eye."},
+  {q:"How does the RULE OF THIRDS divide the frame?",opts:["Into four equal parts with one horizontal and one vertical line","Into nine equal parts with two horizontal and two vertical lines","Into three equal vertical sections only","Into six equal triangular sections"],ans:1,exp:"The Rule of Thirds is a fundamental composition principle that divides the frame into nine equal parts, with two horizontal lines and two vertical lines crossing the frame."},
+  {q:"What do LEADING LINES do in a composition?",opts:["Add color and texture to the frame","Direct the viewer's attention toward specific points or subjects","Create symmetrical balance in the image","Define the rule-of-thirds grid"],ans:1,exp:"Leading lines direct the viewer's attention toward specific points or subjects, helping to create a sense of depth, movement, and direction within the composition."},
+  {q:"What can leading lines be made of?",opts:["Only natural elements like rivers","Natural elements like fences or roads, or arranged objects","Only geometric shapes drawn in post","Digital overlays added in editing"],ans:1,exp:"Leading lines can be natural, such as fences or roads, or they can be created through the arrangement of objects within the scene. They can be vertical, diagonal, or horizontal."},
+  {q:"What does BALANCE AND SYMMETRY in composition create?",opts:["Tension and visual unease","A sense of harmony and stability","Depth and strong perspective","Movement and forward direction"],ans:1,exp:"Balance and symmetry refers to the even distribution of visual elements, creating a sense of harmony and stability. An unbalanced composition can evoke tension or unease."},
+  {q:"What is ASYMMETRICAL COMPOSITION?",opts:["Arranging elements equally and identically on both sides","Arranging uneven elements without mirroring them across a central axis","Placing the subject directly in the center","Using only perfectly symmetrical geometric shapes"],ans:1,exp:"Asymmetrical composition in media arts creates visual balance, tension, and dynamic energy by arranging uneven elements — shapes, colors, or textures — without mirroring them across a central axis."},
+  {q:"What does experimenting with DEPTH OF FIELD help create?",opts:["Symmetrical balance in the frame","A sense of separation between subject and surroundings","Leading diagonal lines","A frame-within-a-frame effect"],ans:1,exp:"Experimenting with depth of field creates a sense of separation between the subject and their surroundings, drawing attention to specific elements and creating a more immersive viewing experience."},
+  {q:"What does the FRAME WITHIN A FRAME technique involve?",opts:["Creating a digital picture-in-picture effect","Using elements within the scene to create an additional frame around the subject","Splitting the screen into multiple sections digitally","Adding decorative digital borders to the image"],ans:1,exp:"The frame-within-a-frame technique uses elements within the scene to create an additional frame around the subject, drawing attention, adding depth, and creating a more visually interesting image."},
+  {q:"What is CENTERED COMPOSITION associated with?",opts:["Asymmetrical arrangement creating dynamic tension","A sense of balance and harmony with the subject in the center","Leading lines that draw the eye outward","Frame-within-a-frame effects"],ans:1,exp:"Centered compositions, where the subject is placed directly in the center of the frame, create a sense of balance and harmony, often used with symmetry."},
+  {q:"What is EDITING in film production?",opts:["Writing the script for a film","Selecting and arranging raw footage in a specific order to tell a story","Recording live dialogue for characters","Designing costumes and props for actors"],ans:1,exp:"Editing is the process of selecting the best, most relevant, or most emotional moments from raw footage and arranging them in a specific order to tell a story — like assembling a puzzle."},
+  {q:"What is THE CUT in editing?",opts:["Cutting away from the main action to show context","The simplest, most common edit — placing one clip immediately after another","A series of short shots edited together with music","Switching between two simultaneous actions"],ans:1,exp:"The Cut is the simplest, most common edit — placing one clip immediately after another without any transition effect."},
+  {q:"What is a CUT-AWAY in editing?",opts:["The simplest edit used in all films","Briefly cutting away from the main action to show something else for added context","A series of short shots showing the passage of time","Switching between simultaneous actions to build tension"],ans:1,exp:"A Cut-Away briefly cuts away from the main action to show something else, such as a reaction or a detail, to add context to the scene."},
+  {q:"What is a MONTAGE?",opts:["A type of camera angle technique","A series of short shots edited together, often with music, to show passage of time or progress","Switching between two different simultaneous actions","A single long uninterrupted camera shot"],ans:1,exp:"A Montage is a series of short shots edited together, often with music, to show the passage of time or a character's progress — such as a training sequence."},
+  {q:"What is CROSS CUTTING in film editing?",opts:["Cutting between different time periods in a story","Switching back and forth between two different actions happening simultaneously","Removing unnecessary scenes from the final cut","A type of jump cut technique"],ans:1,exp:"Cross Cutting involves switching back and forth between two different actions happening at the same time to build tension — for example, someone escaping while police chase them."},
+  {q:"What is SOUND DESIGN?",opts:["The process of composing original music for films","The art of creating, acquiring, or manipulating audio elements to enhance mood","The design of acoustics in a theater building","The recording of dialogue only on a film set"],ans:1,exp:"Sound design is the art of creating, acquiring, or manipulating audio elements — including dialogue, sound effects (SFX), Foley, and ambience — to enhance mood, atmosphere, and tone."},
+  {q:"What are SOUND EFFECTS (SFX)?",opts:["Natural sounds recorded on location","Artificial or enhanced sounds not occurring naturally, heightened for dramatic effect","Recordings of real actor dialogue only","Music tracks composed specifically for film scenes"],ans:1,exp:"Sound Effects are artificial or enhanced sounds (e.g., lightsaber whooshes) that do not occur naturally or are heightened for dramatic effect."},
+  {q:"What is FOLEY in sound design?",opts:["Background music composed for a scene","The reproduction of everyday sound effects added in post-production to enhance audio","Recorded dialogue cleaned from set recordings","Computer-generated special effect sounds"],ans:1,exp:"Foley is the reproduction of everyday sound effects (e.g., footsteps, rustling clothing) added in post-production to enhance the audio quality of a film."},
+  {q:"What is AMBIANCE/ATMOSPHERE in sound design?",opts:["The main dialogue track of the film","Background sounds that set the scene's context and location","The film's main composed musical score","Dramatic sound effects like explosions"],ans:1,exp:"Ambiance/Atmosphere refers to background sounds (e.g., wind, city traffic) that set the scene's context and location, grounding the viewer in the world of the story."},
+  {q:"What is the MUSIC/SCORE component in sound design?",opts:["Recorded natural sounds from the environment","Composed or selected tracks that drive emotional, thematic, and rhythmic pacing","Dialogue cleaned and balanced for clarity","Everyday Foley sounds added in post-production"],ans:1,exp:"Music/Score consists of composed or selected tracks that drive the emotional, thematic, and rhythmic pacing of a film."},
+  {q:"What is DIALOGUE/VOICEOVER in sound design?",opts:["Background music tracks layered in editing","Sound effects created and added in post-production","The primary audio, cleaned, edited, and balanced for clarity","Ambient sounds from the shooting environment"],ans:2,exp:"Dialogue/Voiceover is the primary audio of a film, which is cleaned, edited, and balanced for clarity in post-production."},
+  {q:"What is a FEATURE FILM?",opts:["A motion picture under 40 minutes","A full-length motion picture usually lasting 60 minutes or more","A non-fiction film presenting real events","A film made entirely using animation techniques"],ans:1,exp:"A feature film is a full-length motion picture, usually lasting 60 minutes or more, with a complete storyline, developed characters, and structured plot shown in cinemas or on streaming platforms."},
+  {q:"Which film is given as an example of a Philippine FEATURE FILM?",opts:["Sine Kabataan","Dalagang Bukid by José Nepomuceno","RPG Metanoia","I-Witness"],ans:1,exp:"Dalagang Bukid by José Nepomuceno is given as an example of a feature film from the Philippines."},
+  {q:"What is a SHORT FILM?",opts:["A full-length film meant for cinemas","A documentary about Filipino daily life","A motion picture with a shorter running time, usually under 40 minutes","An animated feature-length film"],ans:2,exp:"A short film is a motion picture with a shorter running time, usually under 40 minutes, focusing on a single idea, theme, or message, often used in festivals and online platforms."},
+  {q:"What Philippine example is given for a SHORT FILM?",opts:["Dalagang Bukid","Sine Kabataan","RPG Metanoia","Batas Militar"],ans:1,exp:"Sine Kabataan is given as an example of a short film."},
+  {q:"What is a DOCUMENTARY film?",opts:["A full-length fictional story","A non-fiction film presenting real-life events, people, or social issues","A film created using computer-generated images","A romantic comedy film genre"],ans:1,exp:"A documentary is a non-fiction film that presents real-life events, people, or social issues, aiming to inform, educate, or raise awareness rather than purely entertain."},
+  {q:"Which Philippine programs are given as examples of DOCUMENTARY?",opts:["Dalagang Bukid and RPG Metanoia","TV Patrol and 24 Oras","I-Witness and Batas Militar","Sine Kabataan and Hello Love Goodbye"],ans:2,exp:"I-Witness and Batas Militar are given as examples of documentary films/programs in the Philippines."},
+  {q:"What is ANIMATION as a film type?",opts:["A live-action film enhanced with special effects","A film created using drawings, illustrations, or computer-generated images simulating movement","A non-fiction film about social issues","A short film format for festivals"],ans:1,exp:"Animation is a type of film created using drawings, illustrations, or computer-generated images that simulate movement. It may be produced in 2D, 3D, or other digital techniques."},
+  {q:"What Philippine animated film is given as an example?",opts:["Dalagang Bukid","I-Witness","Sine Kabataan","RPG Metanoia"],ans:3,exp:"RPG Metanoia is given as an example of animation."},
+  {q:"What is PRINT MEDIA?",opts:["Television and radio content transmitted electronically","Information distributed through printed materials such as newspapers, magazines, books, and journals","Online streaming and social media content","Film and cinema productions"],ans:1,exp:"Print media refers to information distributed through printed materials such as newspapers, magazines, books, and journals — one of the oldest forms of mass communication."},
+  {q:"Which of the following is an example of PRINT MEDIA given in the presentation?",opts:["TV Patrol and 24 Oras","ABS-CBN News Online","La Solidaridad and Philippine Daily Inquirer","Hello Love Goodbye"],ans:2,exp:"La Solidaridad and Philippine Daily Inquirer are given as examples of print media."},
+  {q:"What is BROADCAST MEDIA?",opts:["Printed newspapers and magazines","Online streaming platforms and websites","Television and radio transmitting audio-visual content through electronic signals","Social media platforms on the internet"],ans:2,exp:"Broadcast media includes television and radio, which transmit audio and visual content to a wide audience through electronic signals."},
+  {q:"What is given as an example of BROADCAST MEDIA?",opts:["La Solidaridad and Philippine Daily Inquirer","TV Patrol and 24 Oras","ABS-CBN News Online Platform","Hello Love Goodbye"],ans:1,exp:"TV Patrol and 24 Oras are given as examples of broadcast media (television programs)."},
+  {q:"What is CINEMA as a type of media?",opts:["Online streaming of films via the internet","The theatrical exhibition of films in movie theaters with a large screen","Television broadcast of films at home","Film production studios and their infrastructure"],ans:1,exp:"Cinema refers to the theatrical exhibition of films in movie theaters, providing a large-screen and immersive viewing experience."},
+  {q:"Which Philippine film is given as an example of CINEMA?",opts:["Sine Kabataan","RPG Metanoia","Hello, Love, Goodbye","Dalagang Bukid"],ans:2,exp:"Hello, Love, Goodbye is given as an example of cinema (a film shown in theaters)."},
+  {q:"What is DIGITAL/ONLINE MEDIA?",opts:["Television and radio broadcast content","Printed publications and newspapers","Content distributed through the internet including websites, social media, and streaming services","Cinema projection in movie theaters"],ans:2,exp:"Digital or online media refers to content distributed through the internet, including websites, social media platforms, streaming services, and video-sharing applications."},
+  {q:"What is given as an example of DIGITAL/ONLINE MEDIA?",opts:["TV Patrol","Philippine Daily Inquirer","ABS-CBN News Online Platform","Hello Love Goodbye"],ans:2,exp:"ABS-CBN News Online Platform is given as an example of digital/online media."},
+  {q:"What film genre focuses on realistic characters and emotional conflicts?",opts:["Comedy","Drama","Horror","Action"],ans:1,exp:"Drama is a genre that focuses on realistic characters, emotional conflicts, and serious storytelling, often reflecting real-life situations."},
+  {q:"What is the COMEDY film genre designed to do?",opts:["Create fear and suspense","Show historical events dramatically","Entertain and make the audience laugh","Focus on love and romantic relationships"],ans:2,exp:"Comedy is a genre designed to entertain and make the audience laugh through humor, exaggeration, or amusing situations."},
+  {q:"What is the ROMANCE genre centered on?",opts:["Physical action sequences and stunts","Historical events and famous figures","Supernatural horror elements","Love stories and emotional relationships between characters"],ans:3,exp:"Romance is a genre centered on love stories and emotional relationships between characters."},
+  {q:"What is the HORROR genre intended to create?",opts:["Laughter and amusement","Fear, suspense, or tension","Patriotic feelings and national pride","Historical awareness and education"],ans:1,exp:"Horror is a genre intended to create fear, suspense, or tension, often involving supernatural or psychological elements."},
+  {q:"What characterizes the ACTION film genre?",opts:["Deep emotional dialogue and inner monologues","Historical reenactments of past events","Physical stunts, fight scenes, chases, and fast-paced sequences","Romantic relationships between lead characters"],ans:2,exp:"The action genre is characterized by physical stunts, fight scenes, chases, and fast-paced sequences."},
+  {q:"What is the HISTORICAL film genre based on?",opts:["Science fiction scenarios and futuristic settings","Real historical events or figures, portraying past events dramatically","Contemporary social issues in the present day","Fantasy stories with mythical elements"],ans:1,exp:"Historical is a genre based on real historical events or figures, aiming to portray past events in a dramatic format."},
+  {q:"When did Philippine cinema begin?",opts:["Late 1800s","Early 1900s","1950s","1970s"],ans:1,exp:"Philippine cinema began in the early 1900s with films like Dalagang Bukid."},
+  {q:"What period is considered the Golden Age of Philippine cinema?",opts:["1920s–30s","1950s–60s","1970s–80s","1990s–2000s"],ans:1,exp:"Philippine cinema grew and flourished during the Golden Age of the 1950s–60s."},
+  {q:"What happened to Philippine films during Martial Law?",opts:["Film production increased significantly","Films were completely banned entirely","Films were censored, but some directors still reflected social issues","All films had to be produced in English only"],ans:2,exp:"During Martial Law, films were censored but some directors still managed to reflect social issues through their work."},
+  {q:"What common themes appear in Philippine films?",opts:["Science fiction and fantasy adventures","Family relationships, love, poverty, OFWs, and social issues","Historical dramas about colonial periods only","International relations and global politics"],ans:1,exp:"Philippine films focus on themes relatable to Filipinos like family relationships, love, poverty, overseas Filipino workers (OFWs), and various social issues."},
+  {q:"Which film festivals are mentioned for the Philippines?",opts:["Cannes and Venice","Sundance and Berlin","Cinemalaya and Metro Manila Film Festival","TIFF and BAFTA"],ans:2,exp:"Film festivals like Cinemalaya and the Metro Manila Film Festival provide platforms for Filipino filmmakers to showcase their work and gain recognition."},
+  {q:"What challenges does the Philippine film industry face?",opts:["Overproduction and too many competing films","Limited budgets, outdated technology, and low international exposure","Lack of any local audience for films","Excessive government overregulation"],ans:1,exp:"The Philippine film industry faces limited budgets, outdated technology, and low international exposure, which affect production quality and market reach."},
+  {q:"How does Film and Media Arts shape culture according to the presentation?",opts:["By regulating what content people can create","By influencing the way people dress, speak, think, and celebrate traditions","By controlling economic activities","By teaching foreign languages to audiences"],ans:1,exp:"Film and media influence the way people dress, speak, think, and celebrate traditions. Filipino films often focus on family values, shaping cultural identity."},
+  {q:"What types of jobs does the film industry provide?",opts:["Only actors and directors","Only technical crew members","Actors, directors, editors, scriptwriters, camera operators, sound engineers, and digital artists","Only creative writing and story roles"],ans:2,exp:"The film industry provides opportunities for actors, directors, editors, scriptwriters, camera operators, sound engineers, and digital artists, supporting the economy."},
+  {q:"What does the influence 'INSPIRES CREATIVITY AND ACTION' mean?",opts:["It teaches technical filmmaking skills","It motivates people to create and take action in their lives","It funds creative projects financially","It trains professional filmmakers only"],ans:1,exp:"One of the listed influences of Film and Media Arts is that it inspires creativity and action in audiences who watch films and media."},
+  {q:"What does Film and Media Arts allow artists and creators to do?",opts:["Only make money from entertainment products","Present ideas creatively, reflect culture and society, and influence how audiences see the world","Only produce news and documentary content","Create exclusively digital art forms"],ans:1,exp:"Film and Media Arts allows artists and creators to present ideas creatively, reflect culture and society, and influence how audiences see and understand the world through visual and auditory experiences."},
+
+  // ─── THEATER AND PERFORMANCE ARTS ───
+  {q:"How is THEATER defined in the presentation?",opts:["A type of film production studio","A form of art where actors perform a story in front of an audience using dialogue, actions, music, and stage design","A digital media streaming format","A type of visual art like painting"],ans:1,exp:"Theater is a form of art where actors perform a story in front of an audience using dialogue, actions, music, and stage design."},
+  {q:"What is PERFORMANCE ARTS defined as?",opts:["A specific type of scripted theater play only","A broader term including theater, dance, music, and other live performances presented to an audience","A type of digital media production","A form of print media communication"],ans:1,exp:"Performance Arts is a broader term that includes theater, dance, music, and other live performances presented to an audience."},
+  {q:"Which of the following is listed as an importance of theater in our life?",opts:["Helps express emotions and creativity","Increases personal financial wealth","Teaches foreign languages fluently","Improves sports and athletic performance"],ans:0,exp:"Theater helps express emotions and creativity, builds confidence and communication skills, teaches teamwork and discipline, reflects culture and traditions, and provides entertainment and inspiration."},
+  {q:"What skill does theater help BUILD in people?",opts:["Mathematical and analytical ability","Confidence and communication skills","Physical fitness and strength","Foreign language fluency"],ans:1,exp:"One of the importances of theater is that it builds confidence and communication skills in participants."},
+  {q:"What is the role of PERFORMERS in theater elements?",opts:["To design the stage and costumes for the production","To bring the story to life through voice, movement, facial expression, and emotional interpretation","To direct the overall artistic vision","To write and develop the script"],ans:1,exp:"Performers/Actors bring the story to life through voice, movement, facial expression, and emotional interpretation, embodying the characters physically and emotionally."},
+  {q:"What makes theater unique compared to film regarding the AUDIENCE?",opts:["Theater audiences are always larger than film audiences","Theater is live and interactive — audience reactions directly influence the performance","Theater audiences are entirely passive viewers","Theater audiences always sit farther from the performance"],ans:1,exp:"Unlike film, theater is live and interactive — the energy, reactions, and engagement of the audience directly influence the performance."},
+  {q:"What is the role of the DIRECTOR in theater?",opts:["To perform the lead role on stage","To write the complete script of the play","To interpret the script and guide the overall vision of the production","To design all the costumes for the cast"],ans:2,exp:"The director interprets the script and guides the overall vision of the production, coordinating actors, designers, and technical elements to create a unified performance."},
+  {q:"Which of the following is a type of theater stage SPACE mentioned?",opts:["Proscenium stage","Circular open-air stage","Floating water stage","Underground cave stage"],ans:0,exp:"Types of theater spaces include Proscenium stages, Thrust stages, and Arena (theater-in-the-round)."},
+  {q:"What is an ARENA stage also called?",opts:["Proscenium stage","Thrust stage","Theater-in-the-round","Black box theater"],ans:2,exp:"An Arena stage is also called theater-in-the-round, where the audience surrounds the stage on all sides."},
+  {q:"What does DESIGN include as a theater element?",opts:["Script writing and dialogue development","Camera angles and framing techniques","Set design, costume design, lighting, sound design, makeup, and props","Marketing strategies and ticketing systems"],ans:2,exp:"Design creates the visual and sensory world of the play, including set design, costume design, lighting design, sound design, makeup, and props to establish time period, mood, and atmosphere."},
+  {q:"What does TEXT/SCRIPT provide in theater?",opts:["The financial budget for the production","The written blueprint of the play, including dialogue and stage directions","The physical design of the stage","The marketing plan for the show"],ans:1,exp:"The script is the written blueprint of the play. It includes dialogue, stage directions, and sometimes character notes. In some performances like improvisation, the script may be minimal or flexible."},
+  {q:"What are the five structural parts of PLOT in theater?",opts:["Introduction, Conflict, Action, Resolution, Epilogue","Setting, Character, Plot, Theme, Conflict","Exposition, Rising Action, Climax, Falling Action, Resolution","Beginning, Middle, Twist, End, Reflection"],ans:2,exp:"Plot typically includes Exposition (introduction), Rising Action, Climax, Falling Action, and Resolution. This gives structure to the drama."},
+  {q:"What does EXPOSITION in the plot structure represent?",opts:["The highest point of dramatic conflict","The introduction of the story and its characters","The final resolution of all conflicts","The events after the climax that wind down"],ans:1,exp:"Exposition is the introduction of the story, where characters, setting, and basic situation are established for the audience."},
+  {q:"What is THEME in theater?",opts:["The specific type of stage used for the performance","The central message or underlying meaning of the play","The opening scene of every theatrical production","The total number of acts in the play"],ans:1,exp:"Theme is the central message or underlying meaning of the play. It reflects the main idea the playwright wants the audience to think about — such as love, power, betrayal, justice, or identity."},
+  {q:"What is the primary tool in PERFORMANCE ART?",opts:["Advanced digital technology","A musical instrument","The body of the artist","The written script"],ans:2,exp:"The body of the artist is the main tool in performance art. The artist uses their physical presence, movements, facial expressions, and gestures to express ideas and emotions."},
+  {q:"What does ACTION refer to in the elements of performance art?",opts:["Fight sequences choreographed in the performance","What the artist does during the performance — movements, activities, speaking","The story's plot structure from beginning to end","The audience's emotional response to the show"],ans:1,exp:"Action refers to what the artist does during the performance — movements, repeated activities, speaking, or even simple actions. The action is what makes the performance alive."},
+  {q:"How long can performance art last?",opts:["Exactly 60 minutes always","A few minutes or several hours","Always between 2–3 hours only","Always under 30 minutes"],ans:1,exp:"Performance art happens within a certain period and can last a few minutes or several hours. Time is important because it affects how the audience experiences the performance."},
+  {q:"What is AUDIENCE INTERACTION in performance art?",opts:["The audience sits silently throughout the entire performance","The audience can sometimes participate or react directly, becoming part of the artwork","The audience votes for the best performer afterwards","The audience reads a script along with the performers"],ans:1,exp:"In performance art, the audience can sometimes participate or react directly. Their response can become part of the artwork itself, making it more dynamic and unpredictable."},
+  {q:"What is CONCEPT in performance art?",opts:["The physical stage design and set layout","The specific costume theme chosen by designers","The main idea or message behind the performance","The technical lighting setup used"],ans:2,exp:"Concept is the main idea or message behind the performance. Performance art often focuses more on the meaning or concept rather than just entertainment."},
+  {q:"What is DRAMA as a type of theater?",opts:["A comedy-focused performance meant to make audiences laugh","A genre of literature or performance meant to be acted on stage, film, or television","A type of dance performance using choreographed movement","A musical show combining songs and dance numbers"],ans:1,exp:"Drama is a genre of literature or performance meant to be acted on stage, in film, or on television, presenting stories through dialogue and action."},
+  {q:"What is MELODRAMA?",opts:["A drama with minimal dialogue and simple storytelling","A type of drama that exaggerates emotions and situations to strongly appeal to the audience","A realistic drama about historical events only","A comedy integrated with dramatic elements"],ans:1,exp:"Melodrama is a type of drama that exaggerates emotions and situations to appeal strongly to the audience's feelings."},
+  {q:"What is TRAGEDY in theater?",opts:["A humorous play with a happy resolution","A serious drama where the main character suffers or faces downfall","A musical performance showcasing vocal talent","A children's educational theater show"],ans:1,exp:"Tragedy is a serious drama in which the main character suffers or faces downfall, often due to fate, personal flaws, or circumstances."},
+  {q:"What is MUSICAL THEATER?",opts:["A theater performance with only instrumental music and no dialogue","A form of theater combining songs, dialogue, acting, and dance to tell a story","A type of opera performance with only singing","A silent performance that uses only musical accompaniment"],ans:1,exp:"Musical Theater is a form of theater that combines songs, dialogue, acting, and dance to tell a story."},
+  {q:"What is DANCE THEATER?",opts:["A pure dance performance with no narrative or story","A performance art combining dance and theatrical elements such as storytelling, acting, and stage design","A type of musical theater with only singing and dancing","A ballet performance only with classical technique"],ans:1,exp:"Dance Theater is a performance art combining dance and theatrical elements such as storytelling, acting, and stage design."},
+  {q:"What is BALLET?",opts:["A modern improvised and free-form dance style","A classical form of dance theater known for graceful, precise movements and techniques","A street performance art form","A circus acrobatic act on stage"],ans:1,exp:"Ballet is a classical form of dance theater known for graceful, precise movements and techniques."},
+  {q:"What is CONTEMPORARY DANCE?",opts:["A traditional and strictly codified folk dance form","A modern style combining elements of ballet, modern dance, and creative movements","A strictly classical and unchanging dance form","A theatrical mime performance without music"],ans:1,exp:"Contemporary Dance is a modern style of dance that combines elements of ballet, modern dance, and creative movements."},
+  {q:"What is OPERA?",opts:["A silent film performance using only visual storytelling","A comedy show with background music accompaniment","A dramatic performance where singers and musicians perform a story with elaborate costumes and sets","A type of modern radio broadcast format"],ans:2,exp:"Opera is a dramatic performance where singers and musicians perform a story, usually with elaborate costumes and sets."},
+  {q:"What opera example is mentioned in the presentation?",opts:["Romeo and Juliet by Shakespeare","La Traviata by Giuseppe Verdi","Swan Lake by Tchaikovsky","The Phantom of the Opera by Lloyd Webber"],ans:1,exp:"La Traviata opera by Giuseppe Verdi is given as the example of opera in the presentation."},
+  {q:"Where did MIME originate?",opts:["Medieval France in the 12th century","Ancient China during the Tang Dynasty","Ancient Greece and Rome approximately in the 5th century BCE","Renaissance Italy in the 15th century"],ans:2,exp:"Mime originated in ancient Greece and Rome (approx. 5th century BCE) as a theatrical art form using gesture, movement, and facial expression to tell stories or parody daily life."},
+  {q:"What does MIME primarily use to perform and tell stories?",opts:["Spoken dialogue and singing","Gesture, movement, and facial expression","Elaborate and colorful costumes","Puppets and mechanical props"],ans:1,exp:"Mime is a theatrical art form using gesture, movement, and facial expression to tell stories or parody daily life, without speaking."},
+  {q:"In which country did Mime later flourish to become the modern silent art form?",opts:["20th-century United States","19th-century France","18th-century England","17th-century Spain"],ans:1,exp:"Mime later flourished in 19th-century France to become the modern silent art form we know today."},
+  {q:"What is PHYSICAL THEATER?",opts:["A genre using advanced digital technology on stage","A performance genre that prioritizes bodily movement and physicality over spoken dialogue","A type of digital film performance","A comedy format using physical props and slapstick"],ans:1,exp:"Physical theater is a performance genre that prioritizes bodily movement, gesture, and physicality over spoken dialogue to tell stories, convey emotions, and establish atmosphere."},
+  {q:"What does Physical Theater blend together?",opts:["Singing, dancing, dialogue, and elaborate costumes","Dance, mime, acrobatics, and drama","Film projection, television, and live theater","Music, lighting, sound, and set design only"],ans:1,exp:"Physical theater blends elements of dance, mime, acrobatics, and drama to communicate, often treating the performer's body as the primary communicative tool."},
+  {q:"What is PUPPETRY?",opts:["A type of mime performance without speaking","An art form where puppets manipulated by humans are used to tell stories or entertain","A digital animation technique for film","A solo acting performance style"],ans:1,exp:"Puppetry is an art form where puppets (objects or characters manipulated by humans) are used to tell stories, convey emotions, or entertain. It is an ancient, multidisciplinary art form."},
+  {q:"What Philippine example of puppetry is mentioned?",opts:["The Moro-moro puppet shows of Pampanga","The giant paper mache Higantes of Angono","The Tinikling dance puppets of Leyte","The Maranao folk shadow puppets"],ans:1,exp:"The giant paper mache Higantes of Angono is given as the Philippine example of puppetry."},
+  {q:"What is SPOKEN WORD?",opts:["A type of classical radio drama broadcast","A poetic, rhythm-driven performance art focused on vocal inflection and storytelling","A silent theatrical art form","A type of traditional opera performance"],ans:1,exp:"Spoken word is a poetic, rhythm-driven performance art focused on vocal inflection and storytelling, often exploring personal experiences or social issues."},
+  {q:"What is a SOLO PERFORMANCE?",opts:["A group performance with individual spotlights on each performer","A theatrical one-person show emphasizing intimate narratives and direct audience engagement","A type of ensemble dance theater performance","A scripted television production for broadcast"],ans:1,exp:"Solo Performance is a theatrical one-person show emphasizing intimate, self-contained narratives and direct audience engagement, relying on intense emotional delivery and vocal range."},
+  {q:"What is IMPROVISATIONAL THEATER?",opts:["A form of theater based strictly on memorized scripts","A form of theater where actors create scenes, dialogue, and characters spontaneously without a script","A type of puppet theater show for children","A musical theater format with improvised melodies"],ans:1,exp:"Improvisational Theater is a form where actors create scenes, dialogue, and characters spontaneously without a script — everything is made up on the spot."},
+  {q:"What is CIRCUS ARTS?",opts:["A type of street drama performance","Entertainment forms traditionally seen in a circus: acrobatics, juggling, clowning, trapeze, and aerial silks","A form of contemporary dance theater","A classical theatrical style from ancient times"],ans:1,exp:"Circus Arts includes entertainment forms traditionally seen in a circus, including acrobatics, juggling, clowning, trapeze, aerial silks, and other physical performance skills."},
+  {q:"How have theater and performance arts shaped Philippine culture?",opts:["By introducing mainly foreign cultural influences","By serving as both a reflection and a record of the nation's identity throughout history","By replacing traditional rituals and ceremonies","By promoting the use of foreign languages"],ans:1,exp:"Theater and performance arts have played an important role in shaping Philippine culture, serving as both a reflection and a record of the nation's identity by presenting stories about Filipino traditions, religious beliefs, and social struggles."},
+  {q:"What are INDIGENOUS themes in Philippine theater?",opts:["Stories about Philippine independence from colonizers","Stories based on traditions, beliefs, and daily life of early Filipino communities before colonization","Post-World War II narratives about reconstruction","Contemporary social media and technology stories"],ans:1,exp:"Indigenous themes are stories based on the traditions, beliefs, and everyday life of early Filipino communities before colonization, including folk tales, myths, rituals, and dances passed down through generations."},
+  {q:"Which works are given as examples of INDIGENOUS theater themes?",opts:["Noli Me Tangere and El Filibusterismo","Alamat ng Pinya and Biag ni Lam-ang","Senakulo and Moro-moro","Romeo and Juliet and Hamlet"],ans:1,exp:"Alamat ng Pinya and Biag ni Lam-ang are given as examples of indigenous theater themes based on Philippine folk legends."},
+  {q:"What are POST-COLONIAL themes in Philippine theater?",opts:["Stories about modern Filipino achievements in technology","The effects of colonization and the struggles of Filipinos to reclaim identity and freedom","Stories about ancient indigenous folk dances only","Adaptations of international theatrical works"],ans:1,exp:"Post-colonial themes focus on the effects of colonization and the struggles of Filipinos to reclaim their identity and freedom, reflecting historical events, social issues, or national pride."},
+  {q:"What play is given as an example of POST-COLONIAL theater?",opts:["Senakulo","Alamat ng Pinya","Mga Ibong Mandaragit","Biag ni Lam-ang"],ans:2,exp:"Mga Ibong Mandaragit is given as the example of a play highlighting social struggles during post-colonial times."},
+  {q:"What are RELIGIOUS NARRATIVES in Philippine theater?",opts:["Performances about Philippine mythology exclusively","Performances focusing on faith, beliefs, and moral lessons, many influenced by Christianity","Modern political dramas and commentaries","Ancient indigenous tribal ritual performances"],ans:1,exp:"Religious narratives are performances focusing on faith, beliefs, and moral lessons, many influenced by Christianity introduced during the Spanish colonization. They include dramatizations of biblical events or lives of saints."},
+  {q:"What is the SENAKULO?",opts:["An indigenous dance performance from Mindanao","A well-known religious performance depicting the life and passion of Jesus Christ","A post-colonial drama about Filipino independence","A comedy theatrical show during festivals"],ans:1,exp:"The Senakulo is a well-known religious narrative performance that depicts the life and passion of Jesus Christ, introduced during Spanish colonization."},
+  {q:"Who introduced Christianity to the Philippines, influencing religious theater?",opts:["American colonizers during the Commonwealth period","Japanese occupiers during World War II","Spanish colonizers during the colonial period","British missionaries in the 19th century"],ans:2,exp:"Many religious narratives in Philippine theater were influenced by Christianity, which was introduced during the Spanish colonization of the Philippines."},
+  {q:"What is the main PURPOSE of theater and performance arts?",opts:["To generate profit for theater companies and producers","To share stories, ideas, and emotions with people in a meaningful and engaging way","To showcase expensive costumes and elaborate sets","To compete commercially with film and television"],ans:1,exp:"The purpose of theater is to share stories, ideas, and emotions in a meaningful and engaging way, while also educating and encouraging audiences to see different perspectives."},
+  {q:"What financial CHALLENGE does Philippine theater face?",opts:["Receiving too much funding and mismanaging it","Producing a show requires large budgets for costumes, props, lighting, and venue that many groups cannot afford","No local audiences interested in theater at all","Being too commercially profitable to be taken seriously as art"],ans:1,exp:"Producing a theater show requires a large budget for costumes, props, stage design, lighting, sound equipment, and venue rental. Many theater groups do not have enough funds."},
+  {q:"What is the challenge regarding GOVERNMENT SUPPORT for Philippine theater?",opts:["The government controls and micromanages all productions","Theater companies often receive minimal financial assistance from the government","The government overfunds theater at the expense of film","Theater is officially banned by the government"],ans:1,exp:"Theater companies often receive minimal financial assistance from the government. Because of this, many groups rely on private sponsors, donations, or ticket sales to survive."},
+  {q:"What AUDIENCE challenge does Philippine theater face?",opts:["Theater has too large an audience and not enough seats","Live theater usually has a smaller audience compared to movies and digital entertainment","Theater tickets are so cheap audiences don't value the art","Audiences stay too long and delay other productions"],ans:1,exp:"Compared to movies, television, and online streaming platforms, live theater usually has a smaller audience. Many people prefer digital entertainment because it is more convenient and affordable."},
+  {q:"What is a financial challenge for individual THEATER ARTISTS?",opts:["Theater artists earn excessive incomes from performing","Many theater artists do not have a stable or regular income since shows are not performed daily","Theater artists are always fully employed year-round","Theater organizations provide guaranteed monthly salaries"],ans:1,exp:"Many theater artists do not have a stable or regular income. Since theater shows are not performed every day, they only earn money during productions or events. They often need other jobs to survive."},
+  {q:"What is characteristic of JAPANESE traditional theater like Kabuki?",opts:["Minimal costumes and naturalistic, realistic acting","Colorful costumes, heavy makeup, and slow, stylized, symbolic movements","A focus on classical Western plays by Shakespeare","Large Broadway-style musical productions with modern stories"],ans:1,exp:"Traditional Japanese theater like Kabuki uses colorful costumes, heavy makeup, and slow, stylized movements. The acting is very expressive and symbolic, compared to Western theater which is more natural."},
+  {q:"What characterizes theater in the UNITED STATES?",opts:["A focus on classical plays by Shakespeare","Broadway shows with big productions, bright lights, modern stories, and musical performances","Traditional folk theater using symbolic movements","Mime and physical theater without dialogue"],ans:1,exp:"US theater focuses on Broadway shows with big productions, bright lights, modern stories, and musical performances. They often use advanced technology and large stage designs."},
+  {q:"What characterizes theater in the UNITED KINGDOM?",opts:["Large musical Broadway-style productions","A focus on classical plays, especially Shakespeare, with formal acting emphasizing strong dialogue","Traditional Kabuki-style performances with symbolic movement","Improvisational comedy shows without scripts"],ans:1,exp:"UK theater focuses on classical plays, especially works by Shakespeare. Acting is usually more formal and focused on strong dialogue."},
+  {q:"What does the conclusion say about children who participate in arts?",opts:["Children who watch theater become professional actors","Children who participate in arts have greatly improved their academic performance","Theater reduces children's excessive screen time","Children learn foreign languages through theater participation"],ans:1,exp:"Studies show that children who include and participate in arts have greatly improved their performance academically."},
+  {q:"What does theater help teach regarding TEAMWORK?",opts:["It teaches individual competition and winning","It teaches teamwork and discipline through collaborative production","It teaches how to manage finances for productions","It teaches technical filmmaking skills"],ans:1,exp:"One of the importances of theater in our life is that it teaches teamwork and discipline, as productions require collaboration between many people."},
+  {q:"How does theater REFLECT CULTURE according to the presentation?",opts:["It copies foreign cultural practices","It reflects culture and traditions through its stories and performances","It promotes only Western cultural values","It ignores local culture in favor of global trends"],ans:1,exp:"Theater reflects culture and traditions by presenting stories rooted in local history, beliefs, customs, and practices — helping preserve and pass down heritage."},
+  {q:"What does the SPACE element in theater refer to?",opts:["The financial budget allocated for the production","Where the performance takes place and how it is arranged, including stage types","The lighting design for the entire production","The emotional atmosphere created by the actors"],ans:1,exp:"Space refers to where the performance takes place and how it is arranged. This includes Proscenium stages, Thrust stages, and Arena stages. The type of space affects how actors move and how the audience experiences the show."},
+  {q:"How does theater create a strong connection with the audience?",opts:["Through advanced digital special effects","Because it is performed live, creating direct connection between performers and audience","Through expensive and elaborate set designs","Through professionally produced marketing campaigns"],ans:1,exp:"Because theater is performed live, it creates a strong connection between the performers and the audience, making the message more powerful and memorable."},
+  {q:"What COMEDY in drama theater is intended to do?",opts:["Create dramatic tension and pathos","Make the audience laugh and be entertained","Depict the downfall of a tragic hero","Exaggerate emotions to appeal to feelings"],ans:1,exp:"In the context of drama types, Comedy is a type of drama intended to make the audience laugh."},
+  {q:"What does performance art's CONCEPT focus on more than just entertainment?",opts:["Technical perfection of the artistic skills","The meaning or main idea behind the artwork","Commercial success and ticket sales","The physical beauty of the performance space"],ans:1,exp:"Concept is the main idea or message behind the performance. Performance art often focuses more on the meaning or concept rather than just entertainment."},
+  {q:"What is SPACE in performance art?",opts:["The script and conceptual plan of the performance","Where the performance takes place — theater, gallery, street, or any public place","The costume and makeup design for the artist","The time duration of the entire performance"],ans:1,exp:"In performance art, Space is where the performance takes place. It can be in a theater, gallery, street, or any public place. The space helps shape how the performance looks and feels."},
+  {q:"What does Film and Media Arts' role as a PLATFORM FOR SOCIAL AWARENESS involve?",opts:["Promoting only government-approved messages","Promoting patriotism, environmental care, and social responsibility through film","Controlling what political opinions audiences should hold","Only focusing on entertainment without advocacy"],ans:1,exp:"Films promote patriotism, environmental care, and social responsibility. Media reaches large audiences, making it effective for spreading important messages and encouraging positive change."},
+  {q:"According to the conclusion, what can Philippine cinema do to grow stronger?",opts:["Abandon local stories and adopt purely foreign styles","Learn from other countries while improving techniques and storytelling","Focus only on low-budget independent films","Stop competing with foreign productions entirely"],ans:1,exp:"Despite challenges, Philippine cinema can grow stronger by learning from other countries and improving techniques and storytelling, reaching more audiences."},
+  {q:"What does Film and Media Arts ultimately allow people to do, according to the conclusion?",opts:["Make money through digital entertainment platforms","Control and regulate media information","Express ideas, emotions, and messages in creative ways","Replace traditional arts like theater completely"],ans:2,exp:"Film and Media Arts allow people to express ideas, emotions, and messages in creative ways, playing an important role in society despite facing challenges such as limited funding and competition."},
+  {q:"What are the key components listed under SOUND DESIGN in the presentation?",opts:["Sound effects, Foley, Music/Score, Ambiance, and Dialogue/Voiceover","Lighting, framing, composition, and color","Script, direction, acting, and set design","Editing, transitions, cuts, and montage"],ans:0,exp:"The key components of Sound Design listed are: Sound Effects, Foley, Music/Score, Ambiance/Atmosphere, and Dialogue/Voiceover."},
+  {q:"Which element of theater deals with the SEQUENCE OF EVENTS in the story?",opts:["Theme","Design","Space","Plot"],ans:3,exp:"Plot is the sequence of events in the story, typically including Exposition, Rising Action, Climax, Falling Action, and Resolution. It gives structure to the drama."},
+  {q:"Which cinematography type of shot is useful for establishing the SETTING?",opts:["Close-Up Shot","Medium Shot","Long Shot","Low-Angle Shot"],ans:2,exp:"Long shots (also called wide shots) are useful for establishing the setting and providing context for the story, showing the entire scene including characters and their environment."},
+  {q:"What does Film and Media Arts' influence on VALUES AND BEHAVIOR mean?",opts:["It forces people to change their behavior against their will","It influences the values people hold and how they behave in society","It only affects young children's development","It has no real lasting impact on society"],ans:1,exp:"One of the listed influences of Film and Media Arts is that it influences values and behavior — shaping what people believe is right and how they act in the world."},
+  {q:"What is the SCRIPTWRITING described as in the presentation?",opts:["A simple list of scenes for the director","A unique form of visual storytelling requiring concise, descriptive writing to set scenes, provide dialogue, and offer direction","A technical manual for camera operators","A financial budget document for film productions"],ans:1,exp:"Scriptwriting is described as a unique form of visual storytelling that requires concise, descriptive writing to set scenes, provide dialogue, and offer direction for performances."},
+  {q:"What is the TIME element in performance art?",opts:["The historical period depicted in the performance","The period within which the performance happens, which can last minutes or hours","The age of the artist performing","The duration of rehearsals before the show"],ans:1,exp:"In performance art, Time refers to the period within which the performance happens. It can last a few minutes or several hours. Time is important because it affects how the audience experiences the performance."},
+  {q:"What is the BODY element in performance art?",opts:["The physical theater building and stage","The main tool of the artist — physical presence, movements, facial expressions, and gestures","The costumes worn by the performer","The script and choreography prepared beforehand"],ans:1,exp:"The body of the artist is the main tool in performance art. The artist uses their physical presence, movements, facial expressions, and gestures to express ideas and emotions."},
+  {q:"What does theater EDUCATE audiences about according to the presentation?",opts:["Only technical aspects of stage production","Important values, history, culture, and encouraging different perspectives","Commercial skills and business techniques","Foreign languages and global etiquette"],ans:1,exp:"Theater not only entertains but also educates by teaching important values and encouraging people to see different perspectives, sharing real-life experiences about history, culture, and social issues."},
+  {q:"How does theater help preserve and pass down HERITAGE?",opts:["By translating only foreign plays into Filipino","By using local languages, music, costumes, and cultural practices in performances","By banning all foreign cultural influences on stage","By teaching formal academic history in schools"],ans:1,exp:"Theater helps preserve and pass down heritage to younger generations by using local languages, music, costumes, and cultural practices in their performances."},
+  {q:"What are the types of DRAMA mentioned in the presentation?",opts:["Musical, Opera, and Ballet","Melodrama, Tragedy, and Comedy","Mime, Physical Theater, and Puppetry","Circus Arts, Spoken Word, and Solo Performance"],ans:1,exp:"The three types of drama mentioned are Melodrama (exaggerated emotions), Tragedy (serious drama with downfall), and Comedy (intended to make the audience laugh)."},
+];
+
+let questions = [];
+let current = 0;
+let score = 0;
+let userAnswers = [];
+
+function shuffle(arr){
+  const a=[...arr];
+  for(let i=a.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+function startQuiz(){
+  questions = shuffle(ALL_QUESTIONS);
+  current = 0; score = 0; userAnswers = [];
+  showScreen('quiz');
+  renderQuestion();
+}
+
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function renderQuestion(){
+  const q = questions[current];
+  document.getElementById('qCounter').textContent = `Question ${current+1} of ${questions.length}`;
+  document.getElementById('qScoreLive').textContent = `Score: ${score}`;
+  document.getElementById('qNum').textContent = `QUESTION ${current+1}`;
+  document.getElementById('qText').textContent = q.q;
+  document.getElementById('progressFill').style.width = `${(current/questions.length)*100}%`;
+
+  const optEl = document.getElementById('optionsEl');
+  optEl.innerHTML = '';
+  const letters = ['A','B','C','D'];
+  // shuffle options along with answer tracking
+  const indices = [0,1,2,3];
+  const shuffledIdx = shuffle(indices);
+  const correctOriginal = q.ans;
+  let newCorrectPos = shuffledIdx.indexOf(correctOriginal);
+
+  shuffledIdx.forEach((origIdx, pos)=>{
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.innerHTML = `<span class="option-letter">${letters[pos]}</span>${q.opts[origIdx]}`;
+    btn.onclick = () => selectAnswer(pos, newCorrectPos, q.exp);
+    optEl.appendChild(btn);
+  });
+
+  document.getElementById('explanationBox').style.display = 'none';
+  document.getElementById('btnNext').style.display = 'none';
+  // Store shuffled info for review
+  questions[current]._shuffledIdx = shuffledIdx;
+  questions[current]._newCorrect = newCorrectPos;
+}
+
+function selectAnswer(chosen, correct, exp){
+  const btns = document.querySelectorAll('.option-btn');
+  btns.forEach(b=>b.disabled=true);
+
+  const isCorrect = chosen === correct;
+  if(isCorrect) score++;
+
+  btns[chosen].classList.add(isCorrect?'correct':'wrong');
+  if(!isCorrect) btns[correct].classList.add('correct');
+
+  const expBox = document.getElementById('explanationBox');
+  const tag = document.getElementById('resultTag');
+  tag.textContent = isCorrect ? '✓ Correct!' : '✗ Incorrect';
+  tag.className = 'result-tag ' + (isCorrect?'c':'w');
+  document.getElementById('expText').textContent = exp;
+  expBox.style.display = 'block';
+
+  document.getElementById('qScoreLive').textContent = `Score: ${score}`;
+
+  userAnswers[current] = {chosen, correct, isCorrect};
+  document.getElementById('btnNext').style.display = 'block';
+  document.getElementById('btnNext').textContent = current < questions.length-1 ? 'Next Question →' : 'See Results ✦';
+}
+
+function nextQuestion(){
+  current++;
+  if(current >= questions.length){
+    showResults();
+  } else {
+    document.getElementById('qCard').style.animation='none';
+    requestAnimationFrame(()=>{
+      document.getElementById('qCard').style.animation='slideUp .35s cubic-bezier(.4,0,.2,1)';
+      renderQuestion();
+    });
+  }
+}
+
+function showResults(){
+  showScreen('results');
+  const pct = Math.round((score/questions.length)*100);
+  document.getElementById('scoreNum').textContent = score;
+  document.getElementById('statCorrect').textContent = `✓ ${score} Correct`;
+  document.getElementById('statWrong').textContent = `✗ ${questions.length-score} Wrong`;
+  document.getElementById('statPct').textContent = `${pct}% Score`;
+
+  let title, sub;
+  if(pct===100){ title='Perfect Score! 🌟'; sub='Outstanding! You mastered every topic!'; }
+  else if(pct>=85){ title='Excellent Work! ✨'; sub='You have a strong grasp of the material!'; }
+  else if(pct>=70){ title='Great Job! 🎭'; sub='Solid understanding with a few gaps to review.'; }
+  else if(pct>=55){ title='Good Effort! 📽'; sub='Keep studying — you\'re getting there!'; }
+  else { title='Keep Practicing! 💪'; sub='Review the answer key below and try again!'; }
+  document.getElementById('resultsTitle').textContent = title;
+  document.getElementById('resultsSubtitle').textContent = sub;
+
+  buildReview('all');
+}
+
+function buildReview(filter){
+  const list = document.getElementById('reviewList');
+  list.innerHTML='';
+  const letters=['A','B','C','D'];
+  questions.forEach((q,i)=>{
+    const ua = userAnswers[i];
+    if(!ua) return;
+    if(filter==='correct' && !ua.isCorrect) return;
+    if(filter==='wrong' && ua.isCorrect) return;
+
+    const si = q._shuffledIdx;
+    const nc = q._newCorrect;
+
+    const card = document.createElement('div');
+    card.className = `review-card ${ua.isCorrect?'r-correct':'r-wrong'}`;
+
+    const correctOptText = q.opts[si[nc]];
+    const chosenOptText = q.opts[si[ua.chosen]];
+
+    let ansHtml = `<div class="review-answer ${ua.isCorrect?'correct':'wrong-user'}">${ua.isCorrect?'✓':'✗'} Your answer: ${letters[ua.chosen]}. ${chosenOptText}</div>`;
+    if(!ua.isCorrect){
+      ansHtml += `<div class="review-correct-ans">✓ Correct: ${letters[nc]}. ${correctOptText}</div>`;
+    }
+
+    card.innerHTML = `
+      <div class="review-q-num">QUESTION ${i+1}</div>
+      <div class="review-q-text">${q.q}</div>
+      ${ansHtml}
+      <div class="review-exp">${q.exp}</div>
+    `;
+    list.appendChild(card);
+  });
+}
+
+function filterReview(type, btn){
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  buildReview(type);
+}
+
+function restartQuiz(){
+  startQuiz();
+}
+</script>
+</body>
+</html>
