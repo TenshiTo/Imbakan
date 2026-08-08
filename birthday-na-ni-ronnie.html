@@ -1,0 +1,1764 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Happy Birthday Ronnie</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    background:
+        radial-gradient(circle at 20% 10%, rgba(48,85,140,.16), transparent 35%),
+        radial-gradient(circle at 80% 70%, rgba(94,107,126,.12), transparent 35%),
+        #07090c;
+
+    color: #f5f5f5;
+    font-family: "Inter", sans-serif;
+    overflow-x: hidden;
+}
+
+
+/* =========================================================
+   NAVIGATION
+========================================================= */
+
+nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+
+    z-index: 1000;
+
+    padding: 18px 7%;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    background: rgba(7,9,12,.72);
+    backdrop-filter: blur(16px);
+
+    border-bottom: 1px solid rgba(255,255,255,.08);
+}
+
+.logo {
+    font-family: "Anton", sans-serif;
+    font-size: 1.5rem;
+    letter-spacing: 2px;
+}
+
+.logo span {
+    color: #778da9;
+}
+
+.links a {
+    color: #999;
+    text-decoration: none;
+
+    margin-left: 25px;
+
+    font-size: .8rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+
+    transition: .25s;
+}
+
+.links a:hover {
+    color: white;
+}
+
+
+/* =========================================================
+   MUSIC BUTTON
+========================================================= */
+
+.music-control {
+    position: fixed;
+
+    right: 22px;
+    bottom: 22px;
+
+    width: 55px;
+    height: 55px;
+
+    z-index: 2000;
+
+    border-radius: 50%;
+
+    border: 1px solid rgba(255,255,255,.15);
+
+    background: rgba(13,16,21,.85);
+    backdrop-filter: blur(15px);
+
+    color: white;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 20px;
+
+    cursor: pointer;
+
+    box-shadow: 0 10px 40px rgba(0,0,0,.4);
+
+    transition: .3s;
+}
+
+.music-control:hover {
+    transform: scale(1.08);
+    background: #778da9;
+}
+
+.music-control.playing {
+    animation: musicPulse 2s infinite;
+}
+
+@keyframes musicPulse {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(119,141,169,.35);
+    }
+
+    50% {
+        box-shadow: 0 0 0 13px rgba(119,141,169,0);
+    }
+}
+
+
+/* =========================================================
+   HERO
+========================================================= */
+
+.hero {
+    min-height: 100vh;
+
+    padding: 120px 7% 70px;
+
+    display: flex;
+    align-items: center;
+
+    position: relative;
+}
+
+.hero::before {
+    content: "";
+
+    position: absolute;
+
+    width: 600px;
+    height: 600px;
+
+    right: -250px;
+    top: 50px;
+
+    border: 1px solid rgba(255,255,255,.06);
+    border-radius: 50%;
+
+    box-shadow:
+        0 0 0 80px rgba(255,255,255,.015),
+        0 0 0 160px rgba(255,255,255,.01);
+
+    pointer-events: none;
+}
+
+.hero-content {
+    max-width: 1050px;
+
+    position: relative;
+    z-index: 2;
+}
+
+.eyebrow {
+    display: inline-block;
+
+    border: 1px solid rgba(255,255,255,.15);
+
+    padding: 8px 14px;
+
+    border-radius: 100px;
+
+    color: #9eafc3;
+
+    text-transform: uppercase;
+
+    letter-spacing: 3px;
+
+    font-size: .7rem;
+
+    margin-bottom: 25px;
+}
+
+h1 {
+    font-family: "Anton", sans-serif;
+
+    text-transform: uppercase;
+
+    font-size: clamp(5rem,15vw,12rem);
+
+    line-height: .82;
+
+    letter-spacing: -2px;
+}
+
+h1 span {
+    display: block;
+
+    color: transparent;
+
+    -webkit-text-stroke: 1px #778da9;
+}
+
+.hero-text {
+    margin-top: 35px;
+
+    max-width: 650px;
+
+    color: #9b9b9b;
+
+    font-size: 1.05rem;
+
+    line-height: 1.8;
+}
+
+.hero-buttons {
+    display: flex;
+
+    gap: 15px;
+
+    margin-top: 35px;
+
+    flex-wrap: wrap;
+}
+
+.btn {
+    border: none;
+
+    padding: 15px 23px;
+
+    font-family: inherit;
+
+    font-weight: 700;
+
+    text-decoration: none;
+
+    cursor: pointer;
+
+    transition: .25s;
+}
+
+.btn-primary {
+    background: #e8edf3;
+    color: #080a0d;
+}
+
+.btn-primary:hover {
+    background: #778da9;
+    color: white;
+
+    transform: translateY(-3px);
+}
+
+.btn-secondary {
+    background: transparent;
+
+    color: white;
+
+    border: 1px solid rgba(255,255,255,.18);
+}
+
+.btn-secondary:hover {
+    background: rgba(255,255,255,.06);
+
+    transform: translateY(-3px);
+}
+
+
+/* =========================================================
+   SECTIONS
+========================================================= */
+
+section {
+    padding: 100px 7%;
+}
+
+.section-number {
+    color: #778da9;
+
+    font-family: monospace;
+
+    margin-bottom: 10px;
+
+    font-size: .9rem;
+}
+
+.section-title {
+    font-family: "Anton", sans-serif;
+
+    font-size: clamp(2.8rem,7vw,5.5rem);
+
+    text-transform: uppercase;
+
+    letter-spacing: 1px;
+
+    margin-bottom: 20px;
+}
+
+.section-subtitle {
+    max-width: 650px;
+
+    color: #858585;
+
+    line-height: 1.8;
+
+    margin-bottom: 50px;
+}
+
+
+/* =========================================================
+   MESSAGE
+========================================================= */
+
+.message-section {
+    border-top: 1px solid rgba(255,255,255,.07);
+}
+
+.message-box {
+    max-width: 1000px;
+
+    padding: 45px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,.055),
+            rgba(255,255,255,.015)
+        );
+
+    border: 1px solid rgba(255,255,255,.08);
+
+    position: relative;
+}
+
+.message-box::before {
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    left: 0;
+
+    width: 4px;
+    height: 100%;
+
+    background: #778da9;
+}
+
+.message-box p {
+    color: #b2b2b2;
+
+    font-size: 1rem;
+
+    line-height: 2;
+
+    margin-bottom: 20px;
+}
+
+.message-box strong {
+    color: white;
+}
+
+.signature {
+    font-family: "Anton", sans-serif;
+
+    text-transform: uppercase;
+
+    font-size: 1.5rem;
+
+    letter-spacing: 2px;
+
+    color: white !important;
+
+    margin-top: 35px;
+}
+
+
+/* =========================================================
+   VIDEO SECTION
+========================================================= */
+
+.videos-section {
+    background: rgba(255,255,255,.015);
+
+    border-top: 1px solid rgba(255,255,255,.07);
+    border-bottom: 1px solid rgba(255,255,255,.07);
+}
+
+.video-grid {
+    display: grid;
+
+    grid-template-columns: repeat(3,1fr);
+
+    gap: 22px;
+}
+
+.video-card {
+    background: #0d1015;
+
+    border: 1px solid rgba(255,255,255,.08);
+
+    overflow: hidden;
+
+    transition: .3s ease;
+}
+
+.video-card:hover {
+    transform: translateY(-7px);
+
+    border-color: rgba(119,141,169,.65);
+
+    box-shadow: 0 20px 60px rgba(0,0,0,.35);
+}
+
+.video-number {
+    padding: 18px 20px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+}
+
+.video-number span:first-child {
+    font-family: "Anton", sans-serif;
+
+    letter-spacing: 1px;
+}
+
+.video-number span:last-child {
+    color: #778da9;
+
+    font-family: monospace;
+
+    font-size: .8rem;
+}
+
+video {
+    width: 100%;
+
+    aspect-ratio: 9 / 16;
+
+    max-height: 650px;
+
+    display: block;
+
+    background: #020304;
+
+    object-fit: contain;
+}
+
+.video-caption {
+    padding: 20px;
+
+    color: #777;
+
+    font-size: .85rem;
+
+    line-height: 1.6;
+
+    border-top: 1px solid rgba(255,255,255,.06);
+}
+
+
+/* =========================================================
+   QUOTE
+========================================================= */
+
+.quote-section {
+    text-align: center;
+
+    min-height: 65vh;
+
+    display: flex;
+
+    justify-content: center;
+    align-items: center;
+}
+
+.quote {
+    max-width: 900px;
+
+    font-family: "Anton", sans-serif;
+
+    font-size: clamp(2.5rem,7vw,6rem);
+
+    line-height: 1.08;
+
+    text-transform: uppercase;
+}
+
+.quote span {
+    color: #778da9;
+}
+
+
+/* =========================================================
+   BIRTHDAY BUTTON
+========================================================= */
+
+.birthday-section {
+    text-align: center;
+
+    border-top: 1px solid rgba(255,255,255,.07);
+}
+
+.big-button {
+    margin-top: 30px;
+
+    padding: 18px 30px;
+
+    background: white;
+
+    color: black;
+
+    border: 0;
+
+    font-weight: 800;
+
+    font-size: 1rem;
+
+    cursor: pointer;
+
+    transition: .3s;
+}
+
+.big-button:hover {
+    background: #778da9;
+
+    color: white;
+
+    transform: scale(1.04);
+}
+
+#birthdayMessage {
+    margin-top: 35px;
+
+    font-family: "Anton", sans-serif;
+
+    font-size: clamp(2rem,6vw,5rem);
+
+    opacity: 0;
+
+    transform: translateY(20px);
+
+    transition: .5s ease;
+}
+
+#birthdayMessage.show {
+    opacity: 1;
+
+    transform: translateY(0);
+}
+
+
+/* =========================================================
+   CONFETTI
+========================================================= */
+
+.confetti {
+    position: fixed;
+
+    top: -20px;
+
+    width: 8px;
+    height: 16px;
+
+    z-index: 9999;
+
+    pointer-events: none;
+
+    animation: fall linear forwards;
+}
+
+@keyframes fall {
+
+    from {
+        transform: translateY(-20px) rotate(0deg);
+        opacity: 1;
+    }
+
+    to {
+        transform: translateY(110vh) rotate(720deg);
+        opacity: .2;
+    }
+}
+
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+footer {
+    padding: 45px 7%;
+
+    display: flex;
+
+    justify-content: space-between;
+    align-items: center;
+
+    color: #555;
+
+    font-size: .8rem;
+
+    border-top: 1px solid rgba(255,255,255,.07);
+}
+
+footer strong {
+    color: #aaa;
+}
+
+
+/* =========================================================
+   SCROLL REVEAL
+========================================================= */
+
+.reveal {
+    opacity: 0;
+
+    transform: translateY(35px);
+
+    transition: .8s ease;
+}
+
+.reveal.visible {
+    opacity: 1;
+
+    transform: translateY(0);
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media(max-width:900px) {
+
+    .video-grid {
+        grid-template-columns: 1fr;
+    }
+
+    video {
+        aspect-ratio: 16 / 9;
+    }
+
+    nav .links {
+        display: none;
+    }
+
+    .message-box {
+        padding: 30px 25px;
+    }
+}
+
+@media(max-width:600px) {
+
+    section {
+        padding: 75px 6%;
+    }
+
+    .hero {
+        padding-left: 6%;
+        padding-right: 6%;
+    }
+
+    h1 {
+        font-size: clamp(4.5rem,24vw,8rem);
+    }
+
+    footer {
+        flex-direction: column;
+
+        gap: 10px;
+
+        text-align: center;
+    }
+
+    .music-control {
+        width: 50px;
+        height: 50px;
+
+        right: 15px;
+        bottom: 15px;
+    }
+}
+</style>
+</head>
+
+
+<body>
+
+
+<!-- ======================================================
+     ONLINE BACKGROUND MUSIC
+     NO LOCAL MP3 NEEDED
+======================================================= -->
+
+<audio
+    id="birthdayMusic"
+    loop
+    preload="auto"
+    crossorigin="anonymous"
+>
+    <source
+        src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/605876/happy-birthday-trimmed.mp3"
+        type="audio/mpeg"
+    >
+</audio>
+
+
+<!-- MUSIC TOGGLE -->
+
+<button
+    class="music-control"
+    id="musicButton"
+    onclick="toggleMusic()"
+    aria-label="Toggle birthday music"
+    title="Music"
+>
+    🔊
+</button>
+
+
+
+<!-- ======================================================
+     NAVIGATION
+======================================================= -->
+
+<nav>
+
+    <div class="logo">
+        R<span>/</span>26
+    </div>
+
+    <div class="links">
+        <a href="#message">MESSAGE</a>
+        <a href="#memories">MEMORIES</a>
+        <a href="#birthday">BIRTHDAY</a>
+    </div>
+
+</nav>
+
+
+
+<!-- ======================================================
+     HERO
+======================================================= -->
+
+<header class="hero">
+
+    <div class="hero-content">
+
+        <div class="eyebrow">
+            Birthday Archive • Special Edition
+        </div>
+
+
+        <h1>
+            HAPPY
+            <span>BIRTHDAY</span>
+            RONNIE.
+        </h1>
+
+
+        <p class="hero-text">
+            One page. Three videos. A whole lot of memories.
+            Made for one guy on one important day.
+        </p>
+
+
+        <div class="hero-buttons">
+
+            <a
+                href="#memories"
+                class="btn btn-primary"
+            >
+                WATCH THE MEMORIES
+            </a>
+
+
+            <a
+                href="#message"
+                class="btn btn-secondary"
+            >
+                READ THE MESSAGE
+            </a>
+
+        </div>
+
+    </div>
+
+</header>
+
+
+
+<!-- ======================================================
+     MESSAGE
+======================================================= -->
+
+<section
+    class="message-section"
+    id="message"
+>
+
+    <div class="reveal">
+
+        <div class="section-number">
+            01 / THE MESSAGE
+        </div>
+
+
+        <h2 class="section-title">
+            FOR RONNIE.
+        </h2>
+
+
+        <p class="section-subtitle">
+            Some things deserve more than a quick
+            “happy birthday” text.
+        </p>
+
+
+        <div class="message-box">
+
+            <p>
+                <strong>Happy birthday, Ronnie.</strong>
+                Another year older, another year of stories,
+                mistakes, wins, random memories, late nights,
+                stupid decisions, and moments that somehow
+                became unforgettable.
+            </p>
+
+
+            <p>
+                I hope this next year gives you more than just
+                another number added to your age. I hope it gives
+                you experiences that actually mean something.
+                I hope you get opportunities you never expected,
+                meet people worth keeping around, and make memories
+                you'll still be talking about years from now.
+            </p>
+
+
+            <p>
+                Life isn't always going to go exactly how you
+                planned it. Sometimes everything works out.
+                Sometimes everything goes completely off the rails.
+                Either way, keep moving. Keep building yourself,
+                keep learning, and keep becoming the kind of man
+                you actually want to be.
+            </p>
+
+
+            <p>
+                I hope you win the battles nobody knows you're
+                fighting. I hope the things stressing you out
+                eventually become things you look back at and
+                laugh about. I hope you have the courage to chase
+                what you want, walk away from what isn't good for
+                you, and appreciate what you already have.
+            </p>
+
+
+            <p>
+                Most importantly, don't forget to actually enjoy
+                your life. Take the trip. Make the joke. Take the
+                pictures. Stay out late once in a while. Tell people
+                you appreciate them. Do things you'll remember.
+                We don't get unlimited time, so make yours count.
+            </p>
+
+
+            <p>
+                Today is yours, man. Forget the stress for a bit,
+                eat whatever the hell you want, enjoy the people
+                around you, watch these embarrassing videos,
+                and celebrate the fact that you've made it through
+                another year.
+            </p>
+
+
+            <p>
+                Here's to more wins, more money, better days,
+                good health, genuine people, ridiculous memories,
+                and another year of becoming a better version
+                of yourself.
+            </p>
+
+
+            <p class="signature">
+                HAPPY BIRTHDAY, RONNIE. 🤝
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- ======================================================
+     VIDEOS
+======================================================= -->
+
+<section
+    class="videos-section"
+    id="memories"
+>
+
+    <div class="reveal">
+
+
+        <div class="section-number">
+            02 / THE ARCHIVE
+        </div>
+
+
+        <h2 class="section-title">
+            THE MEMORIES.
+        </h2>
+
+
+        <p class="section-subtitle">
+            Three pieces of evidence that Ronnie has,
+            in fact, survived another year.
+        </p>
+
+
+
+        <div class="video-grid">
+
+
+            <!-- VIDEO ONE -->
+
+            <article class="video-card">
+
+                <div class="video-number">
+
+                    <span>
+                        MEMORY ONE
+                    </span>
+
+                    <span>
+                        001
+                    </span>
+
+                </div>
+
+
+                <video
+                    controls
+                    playsinline
+                    preload="metadata"
+                >
+
+                    <source
+                        src="ronnie1.mp4"
+                        type="video/mp4"
+                    >
+
+                    Your browser does not support HTML video.
+
+                </video>
+
+
+                <div class="video-caption">
+                    Exhibit A. No explanation required.
+                </div>
+
+            </article>
+
+
+
+            <!-- VIDEO TWO -->
+
+            <article class="video-card">
+
+                <div class="video-number">
+
+                    <span>
+                        MEMORY TWO
+                    </span>
+
+                    <span>
+                        002
+                    </span>
+
+                </div>
+
+
+                <video
+                    controls
+                    playsinline
+                    preload="metadata"
+                >
+
+                    <source
+                        src="ronnie2.mp4"
+                        type="video/mp4"
+                    >
+
+                    Your browser does not support HTML video.
+
+                </video>
+
+
+                <div class="video-caption">
+                    Another moment permanently added
+                    to the Ronnie archives.
+                </div>
+
+            </article>
+
+
+
+            <!-- VIDEO THREE -->
+
+            <article class="video-card">
+
+                <div class="video-number">
+
+                    <span>
+                        MEMORY THREE
+                    </span>
+
+                    <span>
+                        003
+                    </span>
+
+                </div>
+
+
+                <video
+                    controls
+                    playsinline
+                    preload="metadata"
+                >
+
+                    <source
+                        src="ronnie3.mp4"
+                        type="video/mp4"
+                    >
+
+                    Your browser does not support HTML video.
+
+                </video>
+
+
+                <div class="video-caption">
+                    And finally... whatever the hell
+                    was happening here.
+                </div>
+
+            </article>
+
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- ======================================================
+     QUOTE
+======================================================= -->
+
+<section class="quote-section">
+
+    <div class="reveal">
+
+        <div class="quote">
+
+            “DON'T JUST COUNT THE YEARS.
+
+            <span>
+                MAKE THE YEARS COUNT.
+            </span>”
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- ======================================================
+     BIRTHDAY SURPRISE
+======================================================= -->
+
+<section
+    class="birthday-section"
+    id="birthday"
+>
+
+    <div class="reveal">
+
+
+        <div class="section-number">
+            03 / ONE MORE THING
+        </div>
+
+
+        <h2 class="section-title">
+            RONNIE.
+        </h2>
+
+
+        <p
+            class="section-subtitle"
+            style="margin-left:auto;margin-right:auto;"
+        >
+            There's only one correct thing to do now.
+        </p>
+
+
+        <button
+            class="big-button"
+            onclick="celebrate()"
+        >
+            PRESS FOR BIRTHDAY SHIT 🎂
+        </button>
+
+
+        <div id="birthdayMessage">
+            HAPPY FUCKING BIRTHDAY, RONNIE. 🥳
+        </div>
+
+
+    </div>
+
+</section>
+
+
+
+<!-- ======================================================
+     FOOTER
+======================================================= -->
+
+<footer>
+
+    <div>
+        BUILT FOR
+        <strong>RONNIE</strong>
+    </div>
+
+    <div>
+        ONE YEAR OLDER. STILL ALIVE.
+    </div>
+
+</footer>
+
+
+
+<script>
+
+/* =========================================================
+   BACKGROUND MUSIC
+========================================================= */
+
+const birthdayMusic =
+    document.getElementById("birthdayMusic");
+
+const musicButton =
+    document.getElementById("musicButton");
+
+const birthdayVideos =
+    document.querySelectorAll("video");
+
+
+birthdayMusic.volume = 0.42;
+
+
+let musicStarted = false;
+
+let manuallyMuted = false;
+
+let pausedForVideo = false;
+
+
+
+/* =========================================================
+   START MUSIC
+========================================================= */
+
+async function startBirthdayMusic() {
+
+    if (manuallyMuted) {
+        return;
+    }
+
+
+    if (
+        musicStarted &&
+        !birthdayMusic.paused
+    ) {
+        return;
+    }
+
+
+    try {
+
+        await birthdayMusic.play();
+
+        musicStarted = true;
+
+        updateMusicButton();
+
+        removeMusicUnlockListeners();
+
+    }
+
+    catch(error) {
+
+        /*
+        Browser blocked autoplay.
+
+        That's fine.
+
+        The first click, touch,
+        pointer movement, keypress
+        or scroll will try again.
+        */
+
+    }
+
+}
+
+
+
+/* =========================================================
+   AUTOPLAY ATTEMPT
+========================================================= */
+
+window.addEventListener(
+    "load",
+    function() {
+
+        startBirthdayMusic();
+
+    }
+);
+
+
+
+/* =========================================================
+   USER INTERACTION FALLBACK
+
+   Browsers normally require a real user interaction
+   before allowing sound.
+
+   So any of these interactions will try to start it.
+========================================================= */
+
+
+window.addEventListener(
+    "click",
+    startBirthdayMusic
+);
+
+
+window.addEventListener(
+    "pointerdown",
+    startBirthdayMusic
+);
+
+
+window.addEventListener(
+    "touchstart",
+    startBirthdayMusic,
+    {
+        passive: true
+    }
+);
+
+
+window.addEventListener(
+    "keydown",
+    startBirthdayMusic
+);
+
+
+window.addEventListener(
+    "scroll",
+    startBirthdayMusic,
+    {
+        passive: true
+    }
+);
+
+
+
+/* =========================================================
+   REMOVE LISTENERS AFTER SUCCESS
+========================================================= */
+
+function removeMusicUnlockListeners() {
+
+    window.removeEventListener(
+        "click",
+        startBirthdayMusic
+    );
+
+
+    window.removeEventListener(
+        "pointerdown",
+        startBirthdayMusic
+    );
+
+
+    window.removeEventListener(
+        "touchstart",
+        startBirthdayMusic
+    );
+
+
+    window.removeEventListener(
+        "keydown",
+        startBirthdayMusic
+    );
+
+
+    window.removeEventListener(
+        "scroll",
+        startBirthdayMusic
+    );
+
+}
+
+
+
+/* =========================================================
+   MUSIC BUTTON
+========================================================= */
+
+function toggleMusic() {
+
+    /*
+    Prevent this click from accidentally
+    being interpreted as the general
+    autoplay unlock click.
+    */
+
+
+    if (
+        !birthdayMusic.paused
+    ) {
+
+        manuallyMuted = true;
+
+        birthdayMusic.pause();
+
+        updateMusicButton();
+
+        return;
+    }
+
+
+    manuallyMuted = false;
+
+
+    birthdayMusic
+        .play()
+        .then(() => {
+
+            musicStarted = true;
+
+            updateMusicButton();
+
+        })
+        .catch(() => {});
+
+}
+
+
+
+/* =========================================================
+   MUSIC BUTTON APPEARANCE
+========================================================= */
+
+function updateMusicButton() {
+
+    if (
+        birthdayMusic.paused ||
+        manuallyMuted
+    ) {
+
+        musicButton.textContent = "🔇";
+
+        musicButton.classList.remove(
+            "playing"
+        );
+
+    }
+
+    else {
+
+        musicButton.textContent = "🔊";
+
+        musicButton.classList.add(
+            "playing"
+        );
+
+    }
+
+}
+
+
+
+birthdayMusic.addEventListener(
+    "play",
+    updateMusicButton
+);
+
+
+birthdayMusic.addEventListener(
+    "pause",
+    updateMusicButton
+);
+
+
+
+/* =========================================================
+   VIDEO HANDLING
+
+   When Ronnie starts one of the videos:
+
+   1. Other videos pause.
+   2. Birthday song pauses.
+   3. When video finishes, birthday song resumes.
+========================================================= */
+
+
+birthdayVideos.forEach((video) => {
+
+
+    video.addEventListener(
+        "play",
+        function() {
+
+
+            /*
+            Pause every OTHER video.
+            */
+
+            birthdayVideos.forEach(
+                (otherVideo) => {
+
+                    if (
+                        otherVideo !== video &&
+                        !otherVideo.paused
+                    ) {
+
+                        otherVideo.pause();
+
+                    }
+
+                }
+            );
+
+
+            /*
+            Pause background music.
+            */
+
+            if (
+                !birthdayMusic.paused
+            ) {
+
+                pausedForVideo = true;
+
+                birthdayMusic.pause();
+
+            }
+
+        }
+    );
+
+
+
+    video.addEventListener(
+        "pause",
+        resumeMusicAfterVideo
+    );
+
+
+    video.addEventListener(
+        "ended",
+        resumeMusicAfterVideo
+    );
+
+
+});
+
+
+
+/* =========================================================
+   RESUME MUSIC
+========================================================= */
+
+function resumeMusicAfterVideo() {
+
+
+    const anotherVideoPlaying =
+        [...birthdayVideos].some(
+
+            video =>
+                !video.paused &&
+                !video.ended
+
+        );
+
+
+    if (
+        !anotherVideoPlaying &&
+        pausedForVideo &&
+        !manuallyMuted
+    ) {
+
+        birthdayMusic
+            .play()
+            .catch(() => {});
+
+
+        pausedForVideo = false;
+
+    }
+
+}
+
+
+
+/* =========================================================
+   SCROLL REVEAL
+========================================================= */
+
+const revealElements =
+    document.querySelectorAll(".reveal");
+
+
+const observer =
+    new IntersectionObserver(
+
+        (entries) => {
+
+            entries.forEach(
+                (entry) => {
+
+                    if (
+                        entry.isIntersecting
+                    ) {
+
+                        entry.target
+                            .classList
+                            .add("visible");
+
+                    }
+
+                }
+            );
+
+        },
+
+        {
+            threshold: .15
+        }
+
+    );
+
+
+revealElements.forEach(
+    element => {
+
+        observer.observe(element);
+
+    }
+);
+
+
+
+/* =========================================================
+   BIRTHDAY SURPRISE BUTTON
+========================================================= */
+
+function celebrate() {
+
+
+    const message =
+        document.getElementById(
+            "birthdayMessage"
+        );
+
+
+    message.classList.add(
+        "show"
+    );
+
+
+    createConfetti();
+
+
+    /*
+    Make sure music starts here too.
+
+    This button click counts as
+    a user interaction.
+    */
+
+    if (
+        !manuallyMuted &&
+        birthdayMusic.paused
+    ) {
+
+        birthdayMusic
+            .play()
+            .then(() => {
+
+                musicStarted = true;
+
+            })
+            .catch(() => {});
+
+    }
+
+
+    /*
+    Small vibration on phones
+    that support it.
+    */
+
+    if (
+        navigator.vibrate
+    ) {
+
+        navigator.vibrate(
+            [100,50,100]
+        );
+
+    }
+
+}
+
+
+
+/* =========================================================
+   CONFETTI
+========================================================= */
+
+function createConfetti() {
+
+
+    const colors = [
+
+        "#ffffff",
+        "#778da9",
+        "#415a77",
+        "#b8c5d6",
+        "#d9e2ec"
+
+    ];
+
+
+    for (
+        let i = 0;
+        i < 140;
+        i++
+    ) {
+
+
+        const piece =
+            document.createElement(
+                "div"
+            );
+
+
+        piece.classList.add(
+            "confetti"
+        );
+
+
+        piece.style.left =
+            Math.random() * 100 +
+            "vw";
+
+
+        piece.style.background =
+            colors[
+                Math.floor(
+                    Math.random() *
+                    colors.length
+                )
+            ];
+
+
+        piece.style.animationDuration =
+            (
+                Math.random() * 3 +
+                2
+            ) +
+            "s";
+
+
+        piece.style.animationDelay =
+            (
+                Math.random() *
+                .7
+            ) +
+            "s";
+
+
+        piece.style.transform =
+            "rotate(" +
+            Math.random() * 360 +
+            "deg)";
+
+
+        document.body.appendChild(
+            piece
+        );
+
+
+        setTimeout(
+            () => {
+
+                piece.remove();
+
+            },
+            6000
+        );
+
+    }
+
+}
+
+</script>
+
+
+</body>
+</html>
