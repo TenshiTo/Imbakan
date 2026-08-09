@@ -1,0 +1,2026 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>PANO MO NASABI, RONNIE?</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Archivo+Black&family=Inter:wght@500;700;900&display=swap');
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    overflow-x: hidden;
+    background:
+        radial-gradient(circle at 10% 10%, #202020, transparent 30%),
+        radial-gradient(circle at 90% 40%, #221010, transparent 30%),
+        radial-gradient(circle at 40% 80%, #10191d, transparent 35%),
+        #030303;
+    color: white;
+    font-family: "Inter", sans-serif;
+}
+
+/* =========================================================
+   VHS / SCANLINE OVERLAY
+========================================================= */
+
+body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 9997;
+    opacity: .055;
+    background:
+        repeating-linear-gradient(
+            0deg,
+            white 0,
+            white 1px,
+            transparent 1px,
+            transparent 5px
+        );
+}
+
+/* =========================================================
+   START SCREEN
+========================================================= */
+
+#startScreen {
+    position: fixed;
+    inset: 0;
+    z-index: 999999;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 25px;
+    text-align: center;
+
+    background:
+        radial-gradient(circle at center, #1a1a1a, #030303 70%);
+
+    transition:
+        opacity .7s ease,
+        visibility .7s ease;
+}
+
+#startScreen.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.start-inner {
+    max-width: 1000px;
+}
+
+.warning-small {
+    display: inline-block;
+    padding: 8px 14px;
+    margin-bottom: 25px;
+
+    border: 2px solid white;
+
+    font-family: monospace;
+    font-size: .75rem;
+    letter-spacing: 3px;
+
+    animation: blink .6s steps(2) infinite;
+}
+
+.start-title {
+    margin: 0;
+
+    font-family: "Anton", sans-serif;
+    font-size: clamp(5rem, 17vw, 14rem);
+
+    line-height: .75;
+    letter-spacing: -4px;
+
+    text-transform: uppercase;
+}
+
+.start-title span {
+    display: block;
+    color: transparent;
+    -webkit-text-stroke: 2px white;
+}
+
+.start-description {
+    max-width: 650px;
+    margin: 40px auto 0;
+
+    color: #999;
+
+    line-height: 1.8;
+    font-size: .95rem;
+}
+
+.enter-button {
+    margin-top: 35px;
+
+    padding: 20px 40px;
+
+    border: 4px solid white;
+
+    background: white;
+    color: black;
+
+    font-family: "Archivo Black", sans-serif;
+    font-size: clamp(1rem, 3vw, 1.5rem);
+
+    cursor: pointer;
+
+    box-shadow: 10px 10px 0 #555;
+
+    transition: .15s;
+}
+
+.enter-button:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 14px 14px 0 #555;
+}
+
+.enter-button:active {
+    transform: translate(5px, 5px);
+    box-shadow: 3px 3px 0 #555;
+}
+
+.start-note {
+    margin-top: 25px;
+
+    font-family: monospace;
+    color: #666;
+    font-size: .75rem;
+}
+
+/* =========================================================
+   FLASH SCREEN
+========================================================= */
+
+#flashScreen {
+    position: fixed;
+    inset: 0;
+    z-index: 999998;
+
+    display: none;
+    align-items: center;
+    justify-content: center;
+
+    padding: 20px;
+
+    background: black;
+    color: white;
+
+    text-align: center;
+
+    font-family: "Anton", sans-serif;
+    font-size: clamp(4rem, 13vw, 11rem);
+
+    line-height: .8;
+
+    animation: flash .15s steps(2) infinite;
+}
+
+@keyframes flash {
+    50% {
+        background: white;
+        color: black;
+    }
+}
+
+/* =========================================================
+   NEWS BAR
+========================================================= */
+
+.news {
+    position: fixed;
+    top: 0;
+    left: 0;
+
+    width: 100%;
+
+    z-index: 9990;
+
+    background: white;
+    color: black;
+
+    border-bottom: 4px solid black;
+
+    overflow: hidden;
+    white-space: nowrap;
+
+    font-family: "Archivo Black", sans-serif;
+
+    padding: 9px 0;
+}
+
+.news-inner {
+    display: inline-block;
+    padding-left: 100%;
+    animation: marquee 13s linear infinite;
+}
+
+@keyframes marquee {
+    from {
+        transform: translateX(0);
+    }
+
+    to {
+        transform: translateX(-100%);
+    }
+}
+
+/* =========================================================
+   HERO
+========================================================= */
+
+.hero {
+    min-height: 110vh;
+
+    position: relative;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+
+    padding: 100px 20px;
+
+    overflow: hidden;
+}
+
+.hero h1 {
+    position: relative;
+    z-index: 20;
+
+    margin: 0;
+
+    font-family: "Anton", sans-serif;
+
+    font-size: clamp(6rem, 19vw, 17rem);
+
+    line-height: .74;
+    letter-spacing: -5px;
+
+    text-transform: uppercase;
+
+    text-shadow:
+        8px 8px 0 #333,
+        15px 15px 0 rgba(255,255,255,.06);
+}
+
+.hero h1 span {
+    display: block;
+
+    color: transparent;
+
+    -webkit-text-stroke: 2px white;
+}
+
+.hero-bottom {
+    position: relative;
+    z-index: 20;
+
+    margin-top: 45px;
+
+    font-family: "Archivo Black", sans-serif;
+
+    font-size: clamp(1rem, 3vw, 2rem);
+
+    transform: rotate(-2deg);
+}
+
+.scroll-text {
+    margin-top: 60px;
+
+    font-family: monospace;
+
+    letter-spacing: 4px;
+
+    animation: blink .5s steps(2) infinite;
+}
+
+@keyframes blink {
+    50% {
+        opacity: .2;
+    }
+}
+
+/* =========================================================
+   HERO MEME BOXES
+========================================================= */
+
+.hero-meme {
+    position: absolute;
+
+    z-index: 30;
+
+    padding: 10px 16px;
+
+    background: white;
+    color: black;
+
+    border: 4px solid black;
+
+    box-shadow: 7px 7px 0 black;
+
+    font-family: "Archivo Black", sans-serif;
+
+    font-size: clamp(.8rem, 2.2vw, 1.8rem);
+}
+
+.hm1 {
+    top: 17%;
+    left: 3%;
+    transform: rotate(-11deg);
+}
+
+.hm2 {
+    top: 24%;
+    right: 4%;
+    transform: rotate(9deg);
+}
+
+.hm3 {
+    bottom: 17%;
+    left: 5%;
+    transform: rotate(6deg);
+}
+
+.hm4 {
+    bottom: 12%;
+    right: 5%;
+    transform: rotate(-7deg);
+}
+
+/* =========================================================
+   CHAOS SECTION
+========================================================= */
+
+.chaos {
+    position: relative;
+
+    min-height: 285vh;
+
+    overflow: hidden;
+
+    border-top: 5px solid white;
+    border-bottom: 5px solid white;
+}
+
+/* =========================================================
+   HUGE BACKGROUND WORDS
+========================================================= */
+
+.massive {
+    position: absolute;
+
+    z-index: 1;
+
+    font-family: "Anton", sans-serif;
+
+    font-size: clamp(7rem, 23vw, 22rem);
+
+    color: rgba(255,255,255,.035);
+
+    white-space: nowrap;
+
+    pointer-events: none;
+}
+
+.massive1 {
+    top: 4%;
+    left: -6%;
+    transform: rotate(-8deg);
+}
+
+.massive2 {
+    top: 34%;
+    right: -8%;
+    transform: rotate(9deg);
+}
+
+.massive3 {
+    top: 65%;
+    left: -5%;
+    transform: rotate(-5deg);
+}
+
+/* =========================================================
+   VIDEOS
+========================================================= */
+
+.vid {
+    position: absolute;
+
+    z-index: 10;
+
+    object-fit: cover;
+
+    background: black;
+
+    border: 5px solid white;
+
+    box-shadow:
+        10px 12px 0 black,
+        0 25px 70px rgba(0,0,0,.8);
+
+    transition:
+        transform .2s ease,
+        z-index .2s ease;
+}
+
+.vid:hover {
+    z-index: 900;
+
+    transform:
+        rotate(0deg)
+        scale(1.08) !important;
+}
+
+.v1 {
+    width: 29vw;
+    min-width: 220px;
+    left: 3%;
+    top: 4%;
+    transform: rotate(-8deg);
+}
+
+.v2 {
+    width: 24vw;
+    min-width: 200px;
+    right: 5%;
+    top: 8%;
+    transform: rotate(11deg);
+}
+
+.v3 {
+    width: 31vw;
+    min-width: 230px;
+    left: 36%;
+    top: 17%;
+    transform: rotate(3deg);
+}
+
+.v4 {
+    width: 21vw;
+    min-width: 190px;
+    left: -2%;
+    top: 29%;
+    transform: rotate(13deg);
+}
+
+.v5 {
+    width: 27vw;
+    min-width: 210px;
+    right: -1%;
+    top: 34%;
+    transform: rotate(-13deg);
+}
+
+.v6 {
+    width: 24vw;
+    min-width: 200px;
+    left: 23%;
+    top: 42%;
+    transform: rotate(7deg);
+}
+
+.v7 {
+    width: 31vw;
+    min-width: 230px;
+    right: 13%;
+    top: 50%;
+    transform: rotate(-7deg);
+}
+
+.v8 {
+    width: 21vw;
+    min-width: 190px;
+    left: 4%;
+    top: 60%;
+    transform: rotate(-12deg);
+}
+
+.v9 {
+    width: 28vw;
+    min-width: 220px;
+    right: 1%;
+    top: 67%;
+    transform: rotate(12deg);
+}
+
+.v10 {
+    width: 24vw;
+    min-width: 200px;
+    left: 37%;
+    top: 76%;
+    transform: rotate(-5deg);
+}
+
+.v11 {
+    width: 29vw;
+    min-width: 220px;
+    left: -2%;
+    top: 84%;
+    transform: rotate(10deg);
+}
+
+.v12 {
+    width: 27vw;
+    min-width: 210px;
+    right: 5%;
+    top: 87%;
+    transform: rotate(-9deg);
+}
+
+/* =========================================================
+   MEME STICKERS
+========================================================= */
+
+.meme {
+    position: absolute;
+
+    z-index: 200;
+
+    padding: 11px 17px;
+
+    background: white;
+    color: black;
+
+    border: 4px solid black;
+
+    box-shadow: 7px 7px 0 black;
+
+    font-family: "Archivo Black", sans-serif;
+
+    font-size: clamp(.8rem, 2vw, 1.6rem);
+
+    pointer-events: none;
+}
+
+.m1 {
+    top: 5%;
+    left: 28%;
+    transform: rotate(8deg);
+}
+
+.m2 {
+    top: 14%;
+    right: 25%;
+    transform: rotate(-7deg);
+}
+
+.m3 {
+    top: 25%;
+    left: 45%;
+    transform: rotate(5deg);
+}
+
+.m4 {
+    top: 36%;
+    left: 12%;
+    transform: rotate(-10deg);
+}
+
+.m5 {
+    top: 46%;
+    right: 6%;
+    transform: rotate(8deg);
+}
+
+.m6 {
+    top: 56%;
+    left: 36%;
+    transform: rotate(-5deg);
+}
+
+.m7 {
+    top: 65%;
+    left: 10%;
+    transform: rotate(11deg);
+}
+
+.m8 {
+    top: 72%;
+    right: 27%;
+    transform: rotate(-8deg);
+}
+
+.m9 {
+    top: 82%;
+    left: 27%;
+    transform: rotate(6deg);
+}
+
+.m10 {
+    top: 90%;
+    right: 29%;
+    transform: rotate(-4deg);
+}
+
+/* =========================================================
+   EMOJIS
+========================================================= */
+
+.emoji {
+    position: absolute;
+
+    z-index: 100;
+
+    font-size: clamp(3rem, 8vw, 8rem);
+
+    filter: drop-shadow(7px 7px 0 black);
+
+    pointer-events: none;
+
+    animation: wobble 1.5s ease-in-out infinite alternate;
+}
+
+.e1 {
+    top: 10%;
+    left: 48%;
+}
+
+.e2 {
+    top: 31%;
+    left: 35%;
+    animation-delay: .3s;
+}
+
+.e3 {
+    top: 54%;
+    right: 4%;
+    animation-delay: .6s;
+}
+
+.e4 {
+    top: 74%;
+    left: 48%;
+    animation-delay: .9s;
+}
+
+@keyframes wobble {
+    from {
+        transform: rotate(-15deg) scale(1);
+    }
+
+    to {
+        transform: rotate(15deg) scale(1.18);
+    }
+}
+
+/* =========================================================
+   BULALO SECTION
+========================================================= */
+
+.bulalo-section {
+    min-height: 100vh;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+
+    padding: 80px 20px;
+
+    overflow: hidden;
+
+    position: relative;
+}
+
+.bulalo-section h2 {
+    margin: 0;
+
+    font-family: "Anton", sans-serif;
+
+    font-size: clamp(5rem, 17vw, 15rem);
+
+    line-height: .8;
+
+    text-transform: uppercase;
+}
+
+.bulalo-section h2 span {
+    color: transparent;
+    -webkit-text-stroke: 2px white;
+}
+
+/* =========================================================
+   FINAL SECTION
+========================================================= */
+
+.final {
+    min-height: 120vh;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+
+    padding: 100px 7%;
+
+    border-top: 5px solid white;
+}
+
+.final-inner {
+    max-width: 1000px;
+}
+
+.final h2 {
+    margin: 0 0 60px;
+
+    font-family: "Anton", sans-serif;
+
+    font-size: clamp(5rem, 15vw, 13rem);
+
+    line-height: .8;
+
+    text-transform: uppercase;
+}
+
+.final p {
+    color: #aaa;
+
+    font-size: 1.05rem;
+
+    line-height: 2;
+
+    max-width: 800px;
+
+    margin: 25px auto;
+}
+
+.final strong {
+    color: white;
+}
+
+/* =========================================================
+   CONFETTI
+========================================================= */
+
+.confetti {
+    position: fixed;
+
+    z-index: 9996;
+
+    top: -20px;
+
+    width: 9px;
+    height: 18px;
+
+    pointer-events: none;
+
+    animation: fall linear forwards;
+}
+
+@keyframes fall {
+    to {
+        transform:
+            translateY(110vh)
+            rotate(1000deg);
+
+        opacity: 0;
+    }
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media(max-width:700px) {
+
+    .start-title {
+        letter-spacing: -2px;
+    }
+
+    .hero h1 {
+        letter-spacing: -2px;
+    }
+
+    .hero-meme {
+        font-size: .65rem;
+    }
+
+    .chaos {
+        min-height: 320vh;
+    }
+
+    .vid {
+        min-width: 160px;
+    }
+
+    .v1,
+    .v3,
+    .v5,
+    .v7,
+    .v9,
+    .v11 {
+        width: 57vw;
+    }
+
+    .v2,
+    .v4,
+    .v6,
+    .v8,
+    .v10,
+    .v12 {
+        width: 46vw;
+    }
+
+    .meme {
+        font-size: .68rem;
+        padding: 8px 10px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+
+<!-- =========================================================
+     START SCREEN
+========================================================= -->
+
+<div id="startScreen">
+
+    <div class="start-inner">
+
+        <div class="warning-small">
+            ⚠ CLASSIFIED RONNIE MATERIAL ⚠
+        </div>
+
+        <h1 class="start-title">
+            RONNIE
+            <span>INCIDENT</span>
+        </h1>
+
+        <p class="start-description">
+            This website contains highly questionable Ronnie footage,
+            unnecessary amounts of audio, scientifically unverified
+            birthday allegations, and one extremely serious bulalo incident.
+        </p>
+
+        <button
+            class="enter-button"
+            id="enterButton"
+        >
+            PINDUTIN MO PRE 💀
+        </button>
+
+        <div class="start-note">
+            volume warning: this was a terrible idea
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     FLASH SCREEN
+========================================================= -->
+
+<div id="flashScreen">
+    PANO MO NASABI? 💀
+</div>
+
+
+<!-- =========================================================
+     AUDIO
+========================================================= -->
+
+
+<!-- ONLINE HAPPY BIRTHDAY MUSIC -->
+
+<audio
+    id="birthdayMusic"
+    preload="auto"
+    loop
+>
+    <source
+        src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/605876/happy-birthday-trimmed.mp3"
+        type="audio/mpeg"
+    >
+</audio>
+
+
+<!-- ONLINE PANO MO NASABI -->
+
+<audio
+    id="panoSound"
+    preload="auto"
+>
+    <source
+        src="https://www.myinstants.com/media/sounds/pano-monasabi.mp3"
+        type="audio/mpeg"
+    >
+</audio>
+
+
+<!-- YOUR OFFLINE BULALORD AUDIO -->
+
+<audio
+    id="bulaloSound"
+    preload="auto"
+>
+    <source
+        src="ang-bulalo-sinusutsut-bigyan-ng-cup-noodles_1DUJPTcP.mp3"
+        type="audio/mpeg"
+    >
+</audio>
+
+
+<!-- =========================================================
+     BREAKING NEWS
+========================================================= -->
+
+<div class="news">
+
+    <div class="news-inner">
+
+        🚨 BREAKING NEWS:
+        BIRTHDAY DAW NI RONNIE 🚨
+
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+        PANO MO NASABI?
+
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+        ANO ANG BASEHAN MO?
+
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+        SOURCE: TRUST ME BRO
+
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+        ANG BULALO SINUSUPSUP PARE
+
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+        BAKIT CUP NOODLES?!
+
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+        +1 YEAR DLC 💀
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     HERO
+========================================================= -->
+
+<section class="hero">
+
+    <div class="hero-meme hm1">
+        PANO MO NASABI?
+    </div>
+
+    <div class="hero-meme hm2">
+        MAY EBIDENSYA KA?
+    </div>
+
+    <div class="hero-meme hm3">
+        SOURCE: TRUST ME BRO
+    </div>
+
+    <div class="hero-meme hm4">
+        FINAL ANSWER?
+    </div>
+
+
+    <div>
+
+        <h1>
+
+            RONNIE
+
+            <span>
+                PANO MO
+            </span>
+
+            NASABI?
+
+        </h1>
+
+        <div class="hero-bottom">
+            BIRTHDAY DAW NIYA 💀
+        </div>
+
+        <div class="scroll-text">
+            ↓ SCROLL MO PRE ↓
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+     RONNIE CHAOS
+========================================================= -->
+
+<section class="chaos">
+
+
+    <div class="massive massive1">
+        PANO
+    </div>
+
+    <div class="massive massive2">
+        BULALO
+    </div>
+
+    <div class="massive massive3">
+        RONNIE
+    </div>
+
+
+    <!-- VIDEO 1 -->
+
+    <video
+        class="vid v1"
+        src="ronnie1.mp4"
+        loop
+        playsinline
+        preload="auto">
+    </video>
+
+
+    <!-- VIDEO 2 -->
+
+    <video
+        class="vid v2"
+        src="ronnie2.mp4"
+        loop
+        playsinline
+        preload="auto">
+    </video>
+
+
+    <!-- VIDEO 3 -->
+
+    <video
+        class="vid v3"
+        src="ronnie3.mp4"
+        loop
+        playsinline
+        preload="auto">
+    </video>
+
+
+    <!-- DUPLICATES -->
+
+    <video
+        class="vid v4"
+        src="ronnie1.mp4"
+        loop
+        playsinline
+        preload="auto">
+    </video>
+
+
+    <video
+        class="vid v5"
+        src="ronnie2.mp4"
+        loop
+        playsinline
+        preload="auto">
+    </video>
+
+
+    <video
+        class="vid v6"
+        src="ronnie3.mp4"
+        loop
+        playsinline
+        preload="auto">
+    </video>
+
+
+    <video
+        class="vid v7"
+        src="ronnie1.mp4"
+        loop
+        playsinline
+        preload="auto">
+    </video>
+
+
+    <video
+        class="vid v8"
+        src="ronnie3.mp4"
+        loop
+        playsinline
+        preload="auto">
+    </video>
+
+
+    <video
+        class="vid v9"
+        src="ronnie2.mp4"
+        loop
+        playsinline
+        preload="auto">
+    </video>
+
+
+    <video
+        class="vid v10"
+        src="ronnie1.mp4"
+        loop
+        playsinline
+        preload="auto">
+    </video>
+
+
+    <video
+        class="vid v11"
+        src="ronnie3.mp4"
+        loop
+        playsinline
+        preload="auto">
+    </video>
+
+
+    <video
+        class="vid v12"
+        src="ronnie2.mp4"
+        loop
+        playsinline
+        preload="auto">
+    </video>
+
+
+    <!-- MEME TEXT -->
+
+    <div class="meme m1">
+        PANO MO NASABI?
+    </div>
+
+    <div class="meme m2">
+        ANO ANG BASEHAN MO?
+    </div>
+
+    <div class="meme m3">
+        MAY SOURCE KA BA PRE?
+    </div>
+
+    <div class="meme m4">
+        PARE ANG BULALO 🦴
+    </div>
+
+    <div class="meme m5">
+        SINUSUPSUP YUN PRE 😭
+    </div>
+
+    <div class="meme m6">
+        BAKIT CUP NOODLES?! 💀
+    </div>
+
+    <div class="meme m7">
+        NOODLES... NOODLES PARE
+    </div>
+
+    <div class="meme m8">
+        BRO IS NOT BEATING THE ALLEGATIONS
+    </div>
+
+    <div class="meme m9">
+        APA CITATION MO PRE?
+    </div>
+
+    <div class="meme m10">
+        RONNIE EXPLAIN YOURSELF
+    </div>
+
+
+    <!-- EMOJIS -->
+
+    <div class="emoji e1">
+        💀
+    </div>
+
+    <div class="emoji e2">
+        😭
+    </div>
+
+    <div class="emoji e3">
+        🗿
+    </div>
+
+    <div class="emoji e4">
+        🍜
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+     BULALO
+========================================================= -->
+
+<section class="bulalo-section">
+
+    <h2>
+
+        ANG BULALO
+
+        <br>
+
+        <span>
+            SINUSUPSUP
+        </span>
+
+        <br>
+
+        PARE
+
+        <br>
+
+        😭🦴
+
+    </h2>
+
+</section>
+
+
+<!-- =========================================================
+     FINAL
+========================================================= -->
+
+<section class="final">
+
+    <div class="final-inner">
+
+        <h2>
+
+            HAPPY
+
+            <br>
+
+            BIRTHDAY
+
+            <br>
+
+            PRE 💀
+
+        </h2>
+
+
+        <p>
+            <strong>
+                Pano mo nasabi na birthday ni Ronnie?
+            </strong>
+        </p>
+
+
+        <p>
+            May birth certificate ka?
+            May source ka?
+            May supporting documents ka?
+            Peer reviewed ba?
+            APA citation?
+            Ano ang basehan mo?
+        </p>
+
+
+        <p>
+            Anyway...
+            assuming totoo ang allegations,
+            happy birthday Ronnie.
+        </p>
+
+
+        <p>
+            Sana dumami pera mo,
+            gumanda buhay mo,
+            mabawasan problema mo,
+            at sana kapag umorder ka ng bulalo...
+        </p>
+
+
+        <p>
+            <strong>
+                HINDI KA BIGYAN NG CUP NOODLES.
+            </strong>
+        </p>
+
+
+        <p>
+            Another year older.
+            Another year wiser.
+        </p>
+
+
+        <p>
+            <strong>
+                PANO MO NASABI?
+            </strong>
+        </p>
+
+
+        <p>
+            💀💀💀💀💀
+        </p>
+
+
+        <p>
+            <strong>
+                HAPPY BIRTHDAY RONNIE 🤝🎂
+            </strong>
+        </p>
+
+    </div>
+
+</section>
+
+
+<script>
+
+/* =========================================================
+   GET EVERYTHING
+========================================================= */
+
+const startScreen =
+    document.getElementById("startScreen");
+
+const enterButton =
+    document.getElementById("enterButton");
+
+const flashScreen =
+    document.getElementById("flashScreen");
+
+const birthdayMusic =
+    document.getElementById("birthdayMusic");
+
+const panoSound =
+    document.getElementById("panoSound");
+
+const bulaloSound =
+    document.getElementById("bulaloSound");
+
+const videos =
+    document.querySelectorAll("video");
+
+const memeStickers =
+    document.querySelectorAll(".meme");
+
+
+let incidentStarted = false;
+
+
+/* =========================================================
+   VOLUMES
+========================================================= */
+
+/*
+Birthday music is background audio.
+*/
+
+birthdayMusic.volume = 0.22;
+
+
+/*
+Meme sounds are louder.
+*/
+
+panoSound.volume = 1.0;
+
+bulaloSound.volume = 1.0;
+
+
+/*
+RONNIE VIDEOS ARE NOT MUTED.
+*/
+
+videos.forEach(video => {
+
+    video.muted = false;
+
+    /*
+    12 copies playing simultaneously can get
+    ridiculously loud, so each individual
+    video is lowered slightly.
+    */
+
+    video.volume = 0.38;
+
+});
+
+
+/* =========================================================
+   RANDOMIZE DUPLICATED VIDEO START TIMES
+========================================================= */
+
+videos.forEach((video, index) => {
+
+    video.addEventListener(
+        "loadedmetadata",
+        () => {
+
+            if (
+                Number.isFinite(video.duration) &&
+                video.duration > 2
+            ) {
+
+                const offset =
+                    (
+                        index * 1.83
+                    )
+                    %
+                    video.duration;
+
+                try {
+
+                    video.currentTime =
+                        offset;
+
+                }
+
+                catch(error) {}
+
+            }
+
+        }
+    );
+
+});
+
+
+/* =========================================================
+   ENTER BUTTON
+
+   ONE REAL CLICK STARTS EVERYTHING.
+========================================================= */
+
+enterButton.addEventListener(
+    "click",
+    startRonnieIncident
+);
+
+
+function startRonnieIncident() {
+
+    if (incidentStarted) {
+        return;
+    }
+
+    incidentStarted = true;
+
+
+    /* =====================================================
+       START BIRTHDAY SONG
+    ===================================================== */
+
+    birthdayMusic.currentTime = 0;
+
+    birthdayMusic
+        .play()
+        .catch(error => {
+
+            console.log(
+                "Birthday music failed:",
+                error
+            );
+
+        });
+
+
+    /* =====================================================
+       START PANO MO NASABI
+    ===================================================== */
+
+    panoSound.currentTime = 0;
+
+    panoSound
+        .play()
+        .catch(error => {
+
+            console.log(
+                "Pano Mo Nasabi failed:",
+                error
+            );
+
+        });
+
+
+    /* =====================================================
+       START YOUR LOCAL BULALO AUDIO
+    ===================================================== */
+
+    bulaloSound.currentTime = 0;
+
+    bulaloSound
+        .play()
+        .catch(error => {
+
+            console.log(
+                "Bulalo audio failed:",
+                error
+            );
+
+        });
+
+
+    /* =====================================================
+       START ALL RONNIE VIDEOS WITH AUDIO
+    ===================================================== */
+
+    videos.forEach(video => {
+
+        video.muted = false;
+
+        video
+            .play()
+            .catch(error => {
+
+                console.log(
+                    "Ronnie video failed:",
+                    error
+                );
+
+            });
+
+    });
+
+
+    /* =====================================================
+       REMOVE START SCREEN
+    ===================================================== */
+
+    startScreen
+        .classList
+        .add("hidden");
+
+
+    /* =====================================================
+       FLASH PANO MO NASABI
+    ===================================================== */
+
+    flashScreen.style.display =
+        "flex";
+
+
+    setTimeout(
+        () => {
+
+            flashScreen.style.display =
+                "none";
+
+        },
+        650
+    );
+
+
+    /* =====================================================
+       CONFETTI
+    ===================================================== */
+
+    confettiExplosion();
+
+    setTimeout(
+        confettiExplosion,
+        350
+    );
+
+    setTimeout(
+        confettiExplosion,
+        800
+    );
+
+}
+
+
+/* =========================================================
+   RANDOM MEME AUDIO ATTACKS
+
+   After everything starts, Pano and Bulalo
+   randomly interrupt again.
+========================================================= */
+
+function playRandomMemeSound() {
+
+    if (!incidentStarted) {
+        return;
+    }
+
+
+    const random =
+        Math.random();
+
+
+    if (random < 0.5) {
+
+        /*
+        PANO MO NASABI
+        */
+
+        try {
+
+            panoSound.currentTime = 0;
+
+            panoSound
+                .play()
+                .catch(() => {});
+
+        }
+
+        catch(error) {}
+
+    }
+
+    else {
+
+        /*
+        BULALO
+        */
+
+        try {
+
+            bulaloSound.currentTime = 0;
+
+            bulaloSound
+                .play()
+                .catch(() => {});
+
+        }
+
+        catch(error) {}
+
+    }
+
+}
+
+
+/* =========================================================
+   RANDOM MEME SCHEDULER
+========================================================= */
+
+function scheduleMemeAttack() {
+
+    /*
+    Somewhere between 6 and 12 seconds.
+    */
+
+    const delay =
+        6000 +
+        Math.random() *
+        6000;
+
+
+    setTimeout(
+        () => {
+
+            playRandomMemeSound();
+
+            scheduleMemeAttack();
+
+        },
+        delay
+    );
+
+}
+
+
+scheduleMemeAttack();
+
+
+/* =========================================================
+   DOUBLE MEME ATTACK
+
+   Occasionally play Pano + Bulalo almost together.
+========================================================= */
+
+function doubleMemeAttack() {
+
+    if (!incidentStarted) {
+        return;
+    }
+
+
+    try {
+
+        panoSound.currentTime = 0;
+
+        panoSound
+            .play()
+            .catch(() => {});
+
+    }
+
+    catch(error) {}
+
+
+    setTimeout(
+        () => {
+
+            try {
+
+                bulaloSound.currentTime = 0;
+
+                bulaloSound
+                    .play()
+                    .catch(() => {});
+
+            }
+
+            catch(error) {}
+
+        },
+        500
+    );
+
+}
+
+
+/*
+Every 25 seconds:
+Pano -> Bulalo
+*/
+
+setInterval(
+    doubleMemeAttack,
+    25000
+);
+
+
+/* =========================================================
+   KEEP VIDEOS PLAYING
+========================================================= */
+
+videos.forEach(video => {
+
+    video.loop = true;
+
+
+    video.addEventListener(
+        "pause",
+        () => {
+
+            /*
+            If a browser randomly pauses a video,
+            attempt to resume after the incident
+            has already been activated.
+            */
+
+            if (incidentStarted) {
+
+                setTimeout(
+                    () => {
+
+                        video
+                            .play()
+                            .catch(() => {});
+
+                    },
+                    300
+                );
+
+            }
+
+        }
+    );
+
+});
+
+
+/* =========================================================
+   MEME STICKER JITTER
+========================================================= */
+
+setInterval(
+    () => {
+
+        memeStickers.forEach(meme => {
+
+            const x =
+                Math.random() * 5 - 2.5;
+
+            const y =
+                Math.random() * 5 - 2.5;
+
+            meme.style.translate =
+                `${x}px ${y}px`;
+
+        });
+
+    },
+    250
+);
+
+
+/* =========================================================
+   RANDOM SCREEN SHAKE
+========================================================= */
+
+function shakeScreen() {
+
+    if (!incidentStarted) {
+        return;
+    }
+
+
+    const x =
+        Math.random() * 4 - 2;
+
+    const y =
+        Math.random() * 4 - 2;
+
+
+    document.body.style.transform =
+        `translate(${x}px, ${y}px)`;
+
+
+    setTimeout(
+        () => {
+
+            document.body.style.transform =
+                "translate(0,0)";
+
+        },
+        70
+    );
+
+}
+
+
+setInterval(
+    shakeScreen,
+    2300
+);
+
+
+/* =========================================================
+   CONFETTI
+========================================================= */
+
+function confettiExplosion() {
+
+    const colors = [
+
+        "#ffffff",
+        "#777777",
+        "#bbbbbb",
+        "#333333",
+        "#dddddd"
+
+    ];
+
+
+    for (
+        let i = 0;
+        i < 100;
+        i++
+    ) {
+
+        const piece =
+            document.createElement(
+                "div"
+            );
+
+
+        piece.className =
+            "confetti";
+
+
+        piece.style.left =
+            Math.random() *
+            100 +
+            "vw";
+
+
+        piece.style.background =
+            colors[
+                Math.floor(
+                    Math.random() *
+                    colors.length
+                )
+            ];
+
+
+        piece.style.animationDuration =
+            (
+                Math.random() *
+                3 +
+                2
+            )
+            +
+            "s";
+
+
+        piece.style.animationDelay =
+            (
+                Math.random() *
+                .4
+            )
+            +
+            "s";
+
+
+        document.body.appendChild(
+            piece
+        );
+
+
+        setTimeout(
+            () => {
+
+                piece.remove();
+
+            },
+            6000
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   PERIODIC CONFETTI
+========================================================= */
+
+setInterval(
+    () => {
+
+        if (incidentStarted) {
+
+            confettiExplosion();
+
+        }
+
+    },
+    14000
+);
+
+
+/* =========================================================
+   DEBUGGING
+
+   If something doesn't play, open browser console.
+
+   This tells you whether each audio file actually loaded.
+========================================================= */
+
+birthdayMusic.addEventListener(
+    "canplaythrough",
+    () => console.log("✅ Birthday music loaded")
+);
+
+
+panoSound.addEventListener(
+    "canplaythrough",
+    () => console.log("✅ Pano Mo Nasabi loaded")
+);
+
+
+bulaloSound.addEventListener(
+    "canplaythrough",
+    () => console.log("✅ BULALO AUDIO LOADED")
+);
+
+
+birthdayMusic.addEventListener(
+    "error",
+    () => console.log("❌ Birthday music failed to load")
+);
+
+
+panoSound.addEventListener(
+    "error",
+    () => console.log("❌ Pano Mo Nasabi failed to load")
+);
+
+
+bulaloSound.addEventListener(
+    "error",
+    () => console.log(
+        "❌ BULALO FAILED — CHECK THE FILE NAME"
+    )
+);
+
+</script>
+
+</body>
+</html>
