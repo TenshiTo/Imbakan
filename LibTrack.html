@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>LibTrack</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=Nunito+Sans:wght@400;600;700&display=swap">
+<style>
+:root{--top:#a9dcf8;--bg:#e6f5fd;--ink:#0d3450;--card:#fff;--cloud:#f1faff;--mist:#d2ebfa;--line:#b7dcf2;--skyd:#1475b3;--skyh:#0e5e92;--ok:#1f9d74;--warn:#c98a00;--bad:#c63d4a;--muted:#4d7089;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--top:#0f3a56;--bg:#0b2233;--ink:#e3f4ff;--card:#12334a;--cloud:#0f2c40;--mist:#1a4560;--line:#2a6285;--skyd:#4db8ef;--skyh:#7acaf5;--muted:#9bc2dc}}
+:root[data-theme="dark"]{--top:#0f3a56;--bg:#0b2233;--ink:#e3f4ff;--card:#12334a;--cloud:#0f2c40;--mist:#1a4560;--line:#2a6285;--skyd:#4db8ef;--skyh:#7acaf5;--muted:#9bc2dc}
+*{box-sizing:border-box}
+html,body{min-height:100%;margin:0}
+body{font:15px/1.55 'Nunito Sans',system-ui,sans-serif;color:var(--ink);background:var(--bg) linear-gradient(180deg,var(--top),var(--bg) 380px) no-repeat}
+h1,h2,h3{font-family:'Bricolage Grotesque',system-ui,sans-serif;margin:0;line-height:1.15}
+h2{font-size:22px}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--skyd);outline-offset:2px}
+.btn{background:var(--skyd);color:#fff;border:2px solid var(--skyd);border-radius:999px;padding:8px 18px;font-weight:700;cursor:pointer}
+:root[data-theme="dark"] .btn,.btn{--x:0}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .btn{color:#06263b}}
+:root[data-theme="dark"] .btn{color:#06263b}
+.btn:hover{background:var(--skyh);border-color:var(--skyh)}
+.btn.ghost{background:transparent;color:var(--skyd)}
+.btn.ghost:hover{background:var(--mist)}
+.btn.bad{background:var(--bad);border-color:var(--bad);color:#fff}
+header{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;justify-content:space-between;padding:14px 22px}
+.brand{font:800 24px 'Bricolage Grotesque',sans-serif;color:var(--skyd)}
+.who{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.role{background:var(--mist);border-radius:999px;padding:2px 12px;font-weight:700;font-size:13px}
+nav{display:flex;gap:8px;overflow-x:auto;padding:0 22px 10px}
+.tab{white-space:nowrap;border:2px solid transparent;background:var(--card);border-radius:999px;padding:7px 16px;font-weight:700;cursor:pointer;color:var(--ink)}
+.tab.on{background:var(--skyd);color:#fff}
+:root[data-theme="dark"] .tab.on{color:#06263b}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .tab.on{color:#06263b}}
+main{max-width:1040px;margin:0 auto;padding:6px 22px 48px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px 22px;box-shadow:0 8px 24px -14px rgba(20,117,179,.45)}
+.narrow{max-width:560px}
+.bar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+input,select{background:var(--cloud);border:2px solid var(--line);border-radius:12px;padding:8px 12px;min-width:0}
+.filters input{flex:1;min-width:180px}
+label{display:block;font-weight:700;font-size:14px;margin-bottom:12px}
+label input,label select{display:block;width:100%;margin-top:4px;font-weight:400}
+.tw{overflow-x:auto}
+table{border-collapse:collapse;width:100%}
+th{text-align:left;background:var(--mist);padding:9px 12px;font-size:13px}
+td{padding:10px 12px;border-bottom:1px solid var(--line)}
+tbody tr[data-id],tr[data-id]{cursor:pointer}
+tr[data-id]:hover td{background:var(--cloud)}
+.row{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.chip{display:inline-block;border-radius:999px;padding:1px 11px;font-weight:700;font-size:12.5px;border:1.5px solid currentColor}
+.pending{color:var(--warn)}.borrowed{color:var(--skyd)}.returned,.active,.available{color:var(--ok)}.canceled,.rejected,.deactivated,.gone{color:var(--bad)}
+.empty{text-align:center;color:var(--muted);padding:28px 0}
+.kv{display:grid;grid-template-columns:max-content 1fr;gap:6px 18px;margin:14px 0}.kv b{color:var(--muted);font-weight:600}
+.hero{min-height:100vh;display:grid;grid-template-columns:1.1fr 1fr;gap:30px;align-items:center;padding:30px 5vw;position:relative;overflow:hidden}
+.hero::before,.hero::after{content:"";position:absolute;background:#fff;border-radius:999px;opacity:.7;filter:blur(2px);z-index:0}
+.hero::before{width:340px;height:90px;left:-60px;top:14%;box-shadow:90px -40px 0 -6px #fff,200px 6px 0 -20px #fff}
+.hero::after{width:280px;height:80px;right:6%;bottom:12%;box-shadow:-80px -34px 0 -6px #fff,70px 8px 0 -18px #fff}
+:root[data-theme="dark"] .hero::before,:root[data-theme="dark"] .hero::after{opacity:.08}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .hero::before,:root:not([data-theme="light"]) .hero::after{opacity:.08}}
+.hero>*{position:relative;z-index:1}
+.hero h1{font-size:clamp(34px,5vw,56px);font-weight:800;margin:10px 0 14px}
+.hero p{max-width:34ch;font-size:17px}
+.auth{max-width:420px;width:100%;justify-self:center}
+.hint{font-size:13px;color:var(--muted);margin-top:14px}
+.link{background:none;border:0;color:var(--skyd);font-weight:700;cursor:pointer;text-decoration:underline;padding:0}
+.ov{position:fixed;inset:0;background:rgba(8,40,62,.45);display:grid;place-items:center;padding:20px;z-index:9}
+.md{background:var(--card);border-radius:18px;padding:24px;max-width:400px;width:100%;box-shadow:0 20px 50px rgba(0,0,0,.3)}
+.md p{margin:0;font-size:16px}.md .row{justify-content:flex-end}
+.seg{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:760px){.hero{grid-template-columns:1fr;min-height:0}.two{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+body{font-size:16px}
+.ic{flex:none;vertical-align:-4px}
+.btn{display:inline-flex;align-items:center;gap:8px;min-height:46px;font-size:16px}
+.tab{display:inline-flex;align-items:center;gap:8px;min-height:46px;font-size:15.5px}
+.brand{display:flex;align-items:center;gap:10px}.logo{display:grid;place-items:center;width:38px;height:38px;border-radius:12px;background:var(--skyd);color:#fff}
+:root[data-theme="dark"] .logo{color:#06263b}@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .logo{color:#06263b}}
+.help{margin:0 0 14px;color:var(--muted);font-size:15.5px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:16px}
+.bk{display:flex;flex-direction:column;gap:4px;text-align:left;background:var(--cloud);border:2px solid var(--line);border-radius:16px;padding:10px;cursor:pointer;color:var(--ink)}
+.bk:hover{border-color:var(--skyd);transform:translateY(-2px)}.bk b{font-size:15px;line-height:1.3;margin-top:6px}.bk small{color:var(--muted)}
+.cv{--c:#4db8ef;display:flex;flex-direction:column;justify-content:space-between;gap:8px;aspect-ratio:3/4;border-radius:6px 12px 12px 6px;padding:14px 12px 12px 18px;color:#fff;background:linear-gradient(135deg,var(--c),#0d3450 190%);box-shadow:inset 8px 0 0 rgba(255,255,255,.28),0 6px 14px -8px rgba(13,52,80,.6);font:700 14px/1.25 'Bricolage Grotesque',sans-serif}
+.cv.big{width:170px;font-size:17px;flex:none}
+.dt{display:flex;gap:22px;flex-wrap:wrap;align-items:flex-start}.dt .kv{flex:1;min-width:220px}
+.mi{display:grid;place-items:center;width:52px;height:52px;border-radius:50%;background:var(--mist);color:var(--ok);margin-bottom:12px}.mi.w{color:var(--bad)}
+.shelf{width:min(340px,100%);margin:22px 0 6px}
+.steps{list-style:none;padding:0;margin:16px 0 0;display:grid;gap:10px;max-width:380px}
+.steps li{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.75);border-radius:14px;padding:10px 14px;font-weight:700;color:#0d3450}
+.steps li .ic{color:#1475b3}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+const $=s=>document.querySelector(s),A=$('#app'),J=a=>a.join('');
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const LV=['Elementary','High School','College'],CT=['Fiction','Science','History','Math','Technology'];
+const I={book:'<path d="M4 19.5V5a2 2 0 0 1 2-2h14v14H6.5A2.5 2.5 0 0 0 4 19.5zM4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/>',list:'<path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"/>',users:'<circle cx="9" cy="8" r="3"/><path d="M3 20a6 6 0 0 1 12 0M16 4a3 3 0 0 1 0 6M18 20a6 6 0 0 0-3-5"/>',user:'<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',key:'<circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M16 7l3 3"/>',chart:'<path d="M4 20V4M4 20h16M8 16v-5M13 16V8M18 16v-3"/>',logout:'<path d="M10 4H5v16h5M15 8l4 4-4 4M19 12H9"/>',search:'<circle cx="11" cy="11" r="7"/><path d="M21 21l-5-5"/>',plus:'<path d="M12 5v14M5 12h14"/>',check:'<path d="M4 12l5 5L20 6"/>',x:'<path d="M6 6l12 12M18 6L6 18"/>',clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',undo:'<path d="M9 14L4 9l5-5M4 9h10a6 6 0 0 1 0 12h-3"/>',shield:'<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/>',hash:'<path d="M5 9h14M5 15h14M10 4L8 20M16 4l-2 16"/>',edit:'<path d="M4 20h4L19 9l-4-4L4 16zM14 6l4 4"/>',trash:'<path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/>',lock:'<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',flask:'<path d="M9 3h6M10 3v6l-5 9a2 2 0 0 0 2 3h10a2 2 0 0 0 2-3l-5-9V3"/>',cpu:'<rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4"/>'};
+const ic=(n,z=18)=>`<svg class="ic" width="${z}" height="${z}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${I[n]}</svg>`;
+const BI={Borrow:'book','Borrow again':'undo','Cancel borrow':'x',Approve:'check',Reject:'x','Mark as returned':'undo',Edit:'edit',Delete:'trash','Reset password':'key',Deactivate:'x',Activate:'check'},bl=l=>(BI[l]?ic(BI[l])+' ':'')+l;
+const CC={Fiction:'#5b7cf0',Science:'#1fae98',History:'#d98f2b',Math:'#7a5cf0',Technology:'#2d9ad8'},CI={Fiction:'book',Science:'flask',History:'clock',Math:'hash',Technology:'cpu'};
+const cover=(r,big)=>`<div class="cv ${big?'big':''}" style="--c:${CC[r.category]||'#4db8ef'}">${ic(CI[r.category]||'book',big?52:32)}<span>${esc(r.name)}</span></div>`;
+const bookCard=r=>`<button class="bk" data-id="${r.id}">${cover(r)}<b>${esc(r.name)}</b><small>${esc(r.author)}</small><span>${r.copies>0?`<span class="chip available">${r.copies} available</span>`:'<span class="chip gone">None left</span>'}</span></button>`;
+const HINT={PENDING:'(waiting for the librarian to approve)',BORROWED:'(you have this book, return it by the due date)',RETURNED:'(returned, thank you!)',CANCELED:'(you canceled this request)',REJECTED:'(the librarian did not approve this)'};
+const uid=()=>Math.random().toString(36).slice(2,8),today=()=>new Date().toISOString().slice(0,10),plus=d=>new Date(Date.now()+d*864e5).toISOString().slice(0,10);
+const seed=()=>({users:[
+{id:'u1',un:'head',pw:'head123',role:'head',name:'Hana Reyes',st:'ACTIVE'},
+{id:'u2',un:'librarian',pw:'lib123',role:'lib',name:'Leo Santos',st:'ACTIVE'},
+{id:'u3',un:'student',pw:'stud123',role:'stu',name:'Sam Cruz',no:'2024-0001',st:'ACTIVE'}],
+nums:[['2024-0001','Sam Cruz'],['2024-0002','Mia Lopez'],['2024-0003','Ben Tan'],['2024-0004','Ana Diaz'],['2024-0005','Kai Ramos']].map(([no,name])=>({id:no,no,name})),
+books:[['Charlotte\'s Web','E. B. White','Harper','Elementary','Fiction',3],['The Magic School Bus: Space','Joanna Cole','Scholastic','Elementary','Science',2],['Diary of a Young Girl','Anne Frank','Doubleday','High School','History',2],['Holes','Louis Sachar','FSG','High School','Fiction',1],['Algebra Made Easy','R. Santos','Rex','High School','Math',4],['Intro to Algorithms','T. Cormen','MIT Press','College','Technology',2],['Calculus: Early Transcendentals','J. Stewart','Cengage','College','Math',2],['A Brief History of Time','S. Hawking','Bantam','College','Science',1],['Noli Me Tangere','Jose Rizal','Lopez','College','History',3],['Clean Code','R. Martin','Prentice Hall','College','Technology',0]].map(b=>({id:uid(),name:b[0],author:b[1],publisher:b[2],level:b[3],category:b[4],copies:b[5]})),
+reqs:[],logs:[]});
+let DB,me=null,S={tab:'',sel:null,q:'',fl:{}};
+try{DB=JSON.parse(localStorage.getItem('libtrack1'))}catch(e){}
+if(!DB)DB=seed();
+const sv=()=>{try{localStorage.setItem('libtrack1',JSON.stringify(DB))}catch(e){}};
+const U=id=>DB.users.find(u=>u.id==id),B=id=>DB.books.find(b=>b.id==id),bn=r=>B(r.b)?esc(B(r.b).name):'<i>(removed book)</i>',un=r=>U(r.u)?esc(U(r.u).name):'(removed)';
+const chip=s=>`<span class="chip ${s.toLowerCase()}">${s}</span>`,log=a=>DB.logs.unshift({t:new Date().toISOString(),by:me.name,role:me.role,a});
+const ROLE={stu:'Student',lib:'Librarian',head:'Head Librarian'};
+const T={stu:[['browse','Browse books','search'],['mine','My borrowed books','book']],
+lib:[['req','Borrow requests','list'],['books','Manage books','book'],['stu','Student records','users'],['pw','Change password','lock']],
+head:[['req','Borrow requests','list'],['books','Manage books','book'],['stus','Manage students','users'],['libs','Manage librarians','shield'],['nums','Student numbers','hash'],['rep','Reports & logs','chart'],['pw','Change password','lock']]};
+
+function mod(msg,b=['Okay']){return new Promise(r=>{const m=document.createElement('div');m.className='ov';const w=/invalid|incorrect|not available|cannot|taken|already|fill in|deactivated|must|not match|after the end|enter your|still has|has pending/i.test(msg);m.innerHTML=`<div class="md" role="dialog" aria-modal="true"><div class="mi ${w?'w':''}">${ic(b.length>1?'shield':w?'x':'check',28)}</div><p>${msg}</p><div class="row">${J(b.map((x,i)=>`<button class="btn ${i?'ghost':''}" data-i="${i}">${x}</button>`))}</div></div>`;document.body.append(m);m.onclick=e=>{const i=e.target.dataset.i;if(i!=null){m.remove();r(+i)}};m.querySelector('button').focus()})}
+const ask=async m=>await mod(m,['Confirm','Cancel'])==0;
+const fld=(id,l,t='text',v='',o)=>`<label>${l}${o?`<select id="${id}">${J(o.map(x=>`<option ${x==v?'selected':''}>${esc(x)}</option>`))}</select>`:`<input id="${id}" type="${t}" value="${esc(v)}" autocomplete="off">`}</label>`;
+const val=id=>$('#'+id).value.trim();
+function form(title,fs,ok,back,lbl='Save'){$('#main').innerHTML=`<section class="card narrow"><h2>${title}</h2><div style="margin-top:14px">${J(fs.map(f=>fld(...f)))}</div><div class="row"><button class="btn" id="ok">${lbl}</button><button class="btn ghost" id="bk">Back</button></div></section>`;$('#ok').onclick=()=>{const v={};fs.forEach(f=>v[f[0]]=f[2]=='password'?$('#'+f[0]).value:val(f[0]));ok(v)};$('#bk').onclick=back||render}
+
+/* ---------- login / sign up ---------- */
+function login(sign){me=null;A.innerHTML=`<div class="hero"><div><div class="brand"><span class="logo">${ic('book',22)}</span>LibTrack</div><h1>Your school library, online.</h1><p>Browse books, send borrow requests and see what you have borrowed, all in one place.</p>
+<svg class="shelf" viewBox="0 0 320 150" role="img" aria-label="Books on a shelf"><rect x="10" y="132" width="300" height="10" rx="5" fill="#1475b3"/><rect x="30" y="50" width="26" height="82" rx="3" fill="#4db8ef"/><rect x="60" y="30" width="30" height="102" rx="3" fill="#1475b3"/><rect x="94" y="62" width="24" height="70" rx="3" fill="#ffc94d"/><rect x="122" y="40" width="28" height="92" rx="3" fill="#2fb58a"/><rect x="160" y="45" width="28" height="87" rx="3" fill="#e5646e" transform="rotate(14 190 132)"/><rect x="220" y="58" width="26" height="74" rx="3" fill="#7a6cf0"/><rect x="250" y="36" width="30" height="96" rx="3" fill="#4db8ef"/></svg>
+<ol class="steps"><li>${ic('user',22)} Sign up with your student number</li><li>${ic('search',22)} Find a book and press Borrow</li><li>${ic('check',22)} Pick it up once a librarian approves</li></ol></div>
+<form class="card auth" id="af"><h2>${sign?'Create a student account':'Log in'}</h2><div style="margin-top:14px">${sign?fld('su','Username')+fld('sp','Password','password')+fld('sn','Student number'):fld('lu','Username')+fld('lp','Password','password')}</div>
+<div class="row"><button class="btn" type="submit">${sign?'Sign up':'Log in'}</button></div>
+<p class="hint">${sign?'<button type="button" class="link" id="sw">Back to login</button>':'New student? <button type="button" class="link" id="sw">Sign up as a student</button>'}</p>
+${sign?'<p class="hint">Demo student numbers: 2024-0002 to 2024-0005</p>':'<p class="hint">Demo logins: student / stud123, librarian / lib123, head / head123</p>'}</form></div>`;
+$('#sw').onclick=()=>login(!sign);
+$('#af').onsubmit=async e=>{e.preventDefault();
+if(sign){const u=val('su'),p=$('#sp').value,n=val('sn');if(!u||!p||!n)return mod('Please fill in every field.');if(DB.users.some(x=>x.un==u))return mod('That username is taken. Pick another one.');const r=DB.nums.find(x=>x.no==n);if(!r||DB.users.some(x=>x.no==n))return mod('Invalid student number. Check it and try again.');
+DB.users.push({id:uid(),un:u,pw:p,role:'stu',name:r.name,no:n,st:'ACTIVE'});sv();const k=await mod('Account created. What would you like to do next?',['Log in','Sign up another account']);return login(k==1)}
+const u=val('lu'),p=$('#lp').value;if(!u||!p)return mod('Enter your username and password.');const x=DB.users.find(y=>y.un==u&&y.pw==p);if(!x)return mod('Invalid username or password.');if(x.st!='ACTIVE')return mod('This account is deactivated. Ask the Head Librarian to activate it.');
+me=x;S={tab:T[x.role][0][0],sel:null,q:'',fl:{}};render()}}
+
+function render(){if(!me)return login();A.innerHTML=`<header><div class="brand"><span class="logo">${ic('book',22)}</span>LibTrack</div><div class="who"><span class="role">${ROLE[me.role]}</span><span>${esc(me.name)}</span><button class="btn ghost" id="lo">${ic('logout')} Log out</button></div></header><nav>${J(T[me.role].map(([k,l,i])=>`<button class="tab ${S.tab==k?'on':''}" data-t="${k}">${ic(i)} ${l}</button>`))}</nav><main id="main"></main>`;
+$('#lo').onclick=()=>login();document.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>{S={...S,tab:b.dataset.t,sel:null,q:'',fl:{},rp:null};render()});V[S.tab]()}
+
+/* ---------- generic list + detail ---------- */
+function mgr(c){const M=$('#main'),rows=()=>c.rows().filter(r=>(!S.q||c.q(r).toLowerCase().includes(S.q.toLowerCase()))&&(c.fl||[]).every(f=>!S.fl[f.k]||f.m(r,S.fl[f.k])));
+if(S.sel){const r=c.rows().find(x=>x.id==S.sel);if(!r){S.sel=null;return mgr(c)}const d=c.detail(r);
+M.innerHTML=`<section class="card"><h2>${d.title}</h2><div class="dt">${d.pic||''}<div class="kv">${J(d.kv.map(([k,v])=>`<b>${k}</b><span>${v}</span>`))}</div></div>${d.extra||''}<div class="row">${J(d.acts.map((a,i)=>`<button class="btn ${a[2]||''}" data-a="${i}">${bl(a[0])}</button>`))}<button class="btn ghost" id="cl">${d.close||'Close'}</button></div></section>`;
+M.querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>d.acts[b.dataset.a][1](r));$('#cl').onclick=()=>{S.sel=null;render()};return}
+M.innerHTML=`<section class="card"><div class="bar"><h2>${c.title}</h2>${c.add?`<button class="btn" id="ad">${ic('plus')} ${c.add[0]}</button>`:''}</div>${c.help?`<p class="help">${c.help}</p>`:''}<div class="filters">${J((c.fl||[]).map(f=>`<select data-f="${f.k}" aria-label="${f.l}"><option value="">${f.l}</option>${J(f.o.map(o=>`<option ${S.fl[f.k]==o?'selected':''}>${o}</option>`))}</select>`))}<input id="q" type="search" placeholder="${c.ph||'Search'}" value="${esc(S.q)}" aria-label="Search"></div><div id="lst"></div></section>`;
+const L=()=>{const R=rows();$('#lst').innerHTML=R.length?(c.cards?`<div class="grid">${J(R.map(c.cards))}</div>`:`<div class="tw"><table><thead><tr>${J(c.cols.map(x=>`<th>${x[0]}</th>`))}</tr></thead><tbody>${J(R.map(r=>`<tr tabindex="0" data-id="${r.id}">${J(c.cols.map(x=>`<td>${x[1](r)}</td>`))}</tr>`))}</tbody></table></div>`):`<p class="empty">${S.q||Object.values(S.fl).some(Boolean)?'Nothing matches. Clear the search or filters to see everything.':c.empty||'Nothing here yet.'}</p>`;
+$('#lst').querySelectorAll('[data-id]').forEach(t=>{const go=()=>{S.sel=t.dataset.id;render()};t.onclick=go;t.onkeydown=e=>{if(e.key=='Enter')go()}})};
+$('#q').oninput=e=>{S.q=e.target.value;L()};M.querySelectorAll('[data-f]').forEach(s=>s.onchange=()=>{S.fl[s.dataset.f]=s.value;L()});if(c.add)$('#ad').onclick=c.add[1];L()}
+
+const lvCt=[{k:'l',l:'All levels',o:LV,m:(r,v)=>r.level==v},{k:'c',l:'All categories',o:CT,m:(r,v)=>r.category==v}];
+const bookCols=[['Title',r=>esc(r.name)],['Author',r=>esc(r.author)],['Level',r=>r.level],['Category',r=>r.category],['Copies',r=>r.copies>0?chip('Available')+' '+r.copies:chip('Gone').replace('Gone','None left')]];
+const bookKV=r=>[['Author',esc(r.author)],['Publisher',esc(r.publisher)],['Level',r.level],['Category',r.category],['Copies available',r.copies]];
+const done=async m=>{await mod(m);render()};
+const hasActive=(f)=>DB.reqs.filter(f).some(r=>['PENDING','BORROWED'].includes(r.s));
+
+/* ---------- student ---------- */
+async function borrow(id){const b=B(id);if(!b||b.copies<1)return mod('Sorry, this book is not available right now.');
+DB.reqs.push({id:uid(),u:me.id,b:id,s:'PENDING',d:today()});sv();await mod('Borrow request sent. Status: PENDING until a librarian approves it.');S={tab:'mine',sel:null,q:'',fl:{}};render()}
+const V={};
+V.browse=()=>mgr({title:'Browse books',rows:()=>DB.books,q:r=>r.name+r.author+r.publisher,ph:'Search by name, author or publisher',fl:lvCt,cols:bookCols,cards:bookCard,help:'Tap a book to see its details. Then press Borrow, and a librarian will approve your request.',
+detail:r=>({title:esc(r.name),pic:cover(r,1),kv:bookKV(r),close:'Cancel',acts:[['Borrow',x=>borrow(x.id)]]})});
+V.mine=()=>mgr({title:'My borrowed books',help:'Every book you asked for is listed here. Tap a book to cancel a request or ask for it again.',rows:()=>DB.reqs.filter(r=>r.u==me.id).slice().reverse(),q:r=>B(r.b)?.name||'',empty:'You have not borrowed anything yet. Open Browse books to start.',
+cols:[['Book',bn],['Requested',r=>r.d],['Due',r=>r.due||'-'],['Status',r=>chip(r.s)]],
+detail:r=>({title:bn(r),kv:[['Status',chip(r.s)+' '+HINT[r.s]],['Requested',r.d],['Borrowed on',r.bd||'-'],['Due date',r.due||'-'],['Returned on',r.rd||'-']],
+acts:r.s=='PENDING'?[['Cancel borrow',async x=>{x.s='CANCELED';sv();done('Your borrow request was canceled.')},'bad']]:r.s=='RETURNED'?[['Borrow again',x=>borrow(x.b)]]:[]})});
+
+/* ---------- requests (librarian + head) ---------- */
+async function approve(r){const b=B(r.b);if(!b||b.copies<1)return mod('This book is not available right now.');r.s='BORROWED';b.copies--;r.bd=today();r.due=plus(7);log(`Approved "${b.name}" for ${U(r.u)?.name}`);sv();S.sel=null;done('Request approved. The book is borrowed and due on '+r.due+'.')}
+async function reject(r){if(!await ask('Reject this request?'))return;r.s='REJECTED';log(`Rejected "${B(r.b)?.name}" for ${U(r.u)?.name}`);sv();S.sel=null;done('Request rejected.')}
+async function giveBack(r){if(!await ask('Mark this book as returned?'))return;r.s='RETURNED';r.rd=today();if(B(r.b))B(r.b).copies++;log(`Marked "${B(r.b)?.name}" returned by ${U(r.u)?.name}`);sv();S.sel=null;done('Book marked as returned.')}
+V.req=()=>mgr({title:'Borrow requests',help:'Students ask to borrow books here. Tap a request to approve or reject it.',rows:()=>DB.reqs.slice().reverse(),q:r=>(U(r.u)?.name||'')+(U(r.u)?.no||'')+(B(r.b)?.name||''),ph:'Search by student number, student or book',
+fl:[{k:'s',l:'All statuses',o:['PENDING','BORROWED','RETURNED','CANCELED','REJECTED'],m:(r,v)=>r.s==v}],
+cols:[['Student',un],['Book',bn],['Requested',r=>r.d],['Status',r=>chip(r.s)]],
+detail:r=>({title:bn(r),kv:[['Student',un(r)+' ('+esc(U(r.u)?.no||'-')+')'],['Status',chip(r.s)],['Requested',r.d],['Borrowed on',r.bd||'-'],['Due date',r.due||'-'],['Returned on',r.rd||'-']],
+acts:r.s=='PENDING'?[['Approve',approve],['Reject',reject,'bad']]:r.s=='BORROWED'?[['Mark as returned',giveBack]]:[]})});
+
+/* ---------- books ---------- */
+function bookForm(b){const e=!!b;form(e?'Edit book':'Add book',[['n','Book name','text',b?.name],['a','Author','text',b?.author],['p','Publisher','text',b?.publisher],['l','Level','text',b?.level||LV[0],LV],['c','Category','text',b?.category||CT[0],CT],['k','Copies','number',b?.copies??1]],async v=>{
+if(Object.values(v).some(x=>x===''))return mod('Please fill in every field.');const k=+v.k;if(!Number.isInteger(k)||k<0)return mod('Copies must be a whole number, 0 or more.');
+if(!e&&DB.books.some(x=>x.name.toLowerCase()==v.n.toLowerCase()&&x.author.toLowerCase()==v.a.toLowerCase()))return mod('This book already exists.');
+const o=b||{id:uid()};Object.assign(o,{name:v.n,author:v.a,publisher:v.p,level:v.l,category:v.c,copies:k});if(!e)DB.books.push(o);log((e?'Edited':'Added')+` book "${v.n}"`);sv();await mod(e?'Book updated.':'Book added. QR code has been printed.');S.sel=e?b.id:null;render()})}
+V.books=()=>mgr({title:'Manage books',rows:()=>DB.books,q:r=>r.name+r.author+r.publisher,ph:'Search by name, author or publisher',fl:lvCt,cols:bookCols,cards:bookCard,add:['Add book',()=>bookForm()],help:'Add new books, fix their details or remove them. A QR code is printed for every new book.',
+detail:r=>({title:esc(r.name),pic:cover(r,1),kv:bookKV(r),acts:[['Edit',bookForm],['Delete',async x=>{if(!await ask('Delete this book?'))return;if(hasActive(q=>q.b==x.id))return mod('This book has pending or borrowed requests, so it cannot be deleted.');DB.books=DB.books.filter(y=>y.id!=x.id);log(`Deleted book "${x.name}"`);sv();S.sel=null;done('Book deleted.')},'bad']]})});
+
+/* ---------- students ---------- */
+const hist=r=>{const h=DB.reqs.filter(x=>x.u==r.id);return `<h3 style="margin:8px 0">Borrow history</h3>`+(h.length?`<div class="tw"><table><tr><th>Book</th><th>Requested</th><th>Status</th></tr>${J(h.map(x=>`<tr><td>${bn(x)}</td><td>${x.d}</td><td>${chip(x.s)}</td></tr>`))}</table></div>`:'<p class="empty">No borrow history.</p>')};
+const stuBase=(title,head)=>({title,help:head?'Look up students, see what they borrowed, reset passwords or switch accounts on and off.':'Look up a student to see the books they borrowed.',rows:()=>DB.users.filter(u=>u.role=='stu'),q:r=>r.name+r.no+r.un,ph:'Search by student number, name or username',
+cols:[['Student number',r=>esc(r.no)],['Name',r=>esc(r.name)],['Username',r=>esc(r.un)],['Status',r=>chip(r.st)]],
+detail:r=>({title:esc(r.name),kv:[['Student number',esc(r.no)],['Username',esc(r.un)],['Status',chip(r.st)]],extra:hist(r),acts:head?acctActs(r,'student','stu'):[]})});
+V.stu=()=>mgr(stuBase('Student records',false));
+V.stus=()=>mgr(stuBase('Manage students',true));
+function acctActs(r,w,kind){const a=[['Reset password',async x=>{if(!await ask('Reset the password to "password123"?'))return;x.pw='password123';log(`Reset ${w} password: ${x.un}`);sv();done('Password reset to password123.')}]];
+if(kind=='lib')a.unshift(['Edit',x=>libForm(x)]);
+a.push(r.st=='ACTIVE'?['Deactivate',async x=>{if(kind=='stu'&&hasActive(q=>q.u==x.id&&q.s=='BORROWED'))return mod('This student still has borrowed books.');if(!await ask('Deactivate this account?'))return;x.st='DEACTIVATED';log(`Deactivated ${w}: ${x.un}`);sv();done('Account deactivated.')}]:['Activate',async x=>{if(!await ask('Activate this account?'))return;x.st='ACTIVE';log(`Activated ${w}: ${x.un}`);sv();done('Account activated.')}]);
+a.push(['Delete',async x=>{if(!await ask('Delete this account?'))return;if(kind=='stu'&&hasActive(q=>q.u==x.id))return mod('This student has pending or borrowed books, so the account cannot be deleted.');DB.users=DB.users.filter(y=>y.id!=x.id);DB.reqs=DB.reqs.filter(q=>q.u!=x.id);log(`Deleted ${w}: ${x.un}`);sv();S.sel=null;done('Account deleted.')},'bad']);return a}
+
+/* ---------- librarians (head) ---------- */
+function libForm(l){const e=!!l;form(e?'Edit librarian':'Add librarian',[['n','Full name','text',l?.name],['u','Username','text',l?.un],...(e?[]:[['p','Temporary password','password']])],async v=>{
+if(Object.values(v).some(x=>x===''))return mod('Please fill in every field.');if(DB.users.some(x=>x.un==v.u&&x!=l))return mod('That username is taken.');
+if(e){l.name=v.n;l.un=v.u}else DB.users.push({id:uid(),un:v.u,pw:v.p,role:'lib',name:v.n,st:'ACTIVE'});log((e?'Edited':'Added')+` librarian: ${v.u}`);sv();await mod(e?'Librarian updated.':'Librarian added.');S.sel=e?l.id:null;render()})}
+V.libs=()=>mgr({title:'Manage librarians',help:'Add librarians, fix their details or switch their accounts on and off.',rows:()=>DB.users.filter(u=>u.role=='lib'),q:r=>r.name+r.un,ph:'Search by name or username',add:['Add librarian',()=>libForm()],
+cols:[['Name',r=>esc(r.name)],['Username',r=>esc(r.un)],['Status',r=>chip(r.st)]],
+detail:r=>({title:esc(r.name),kv:[['Username',esc(r.un)],['Status',chip(r.st)]],acts:acctActs(r,'librarian','lib')})});
+
+/* ---------- student numbers (head) ---------- */
+V.nums=()=>mgr({title:'Valid student numbers',help:'Only students whose number is on this list can sign up.',rows:()=>DB.nums,q:r=>r.no+r.name,ph:'Search by student number or name',
+add:['Add student number',()=>form('Add student number',[['n','Student number'],['m','Student name']],async v=>{if(!v.n||!v.m)return mod('Please fill in every field.');if(DB.nums.some(x=>x.no==v.n))return mod('This student number already exists.');DB.nums.push({id:v.n,no:v.n,name:v.m});log('Added student number '+v.n);sv();await mod('Student number added.');S.sel=null;render()})],
+cols:[['Student number',r=>esc(r.no)],['Name',r=>esc(r.name)],['Account',r=>DB.users.some(u=>u.no==r.no)?chip('Active').replace('Active','Registered'):'Not registered']],
+detail:r=>({title:esc(r.no),kv:[['Name',esc(r.name)],['Account',DB.users.some(u=>u.no==r.no)?'Registered':'Not registered']],acts:[['Delete',async x=>{if(!await ask('Delete this student number?'))return;if(DB.users.some(u=>u.no==x.no))return mod('This number is already registered. Delete the student account first.');DB.nums=DB.nums.filter(y=>y.id!=x.id);log('Deleted student number '+x.no);sv();S.sel=null;done('Student number deleted.')},'bad']]})});
+
+/* ---------- reports & logs (head) ---------- */
+V.rep=()=>{const t=S.rp||'logs',M=$('#main');M.innerHTML=`<section class="card"><div class="seg">${J([['logs','Activity logs'],['bor','Borrowing report'],['inv','Inventory report']].map(([k,l])=>`<button class="tab ${t==k?'on':''}" data-r="${k}">${l}</button>`))}</div><div id="rb"></div></section>`;
+M.querySelectorAll('[data-r]').forEach(b=>b.onclick=()=>{S.rp=b.dataset.r;render()});const R=$('#rb'),f=S.lf=S.lf||{};
+if(t=='logs'){const ppl=[...new Set(DB.logs.map(l=>l.by))];R.innerHTML=`<div class="filters"><label>From<input type="date" id="a" value="${f.a||''}"></label><label>To<input type="date" id="b" value="${f.b||''}"></label><label>Staff member<select id="w"><option value="">Everyone</option>${J(ppl.map(p=>`<option ${f.w==p?'selected':''}>${esc(p)}</option>`))}</select></label></div><div id="lg"></div>`;
+const L=()=>{const x=DB.logs.filter(l=>(!f.a||l.t.slice(0,10)>=f.a)&&(!f.b||l.t.slice(0,10)<=f.b)&&(!f.w||l.by==f.w));$('#lg').innerHTML=x.length?`<div class="tw"><table><tr><th>When</th><th>Who</th><th>Action</th></tr>${J(x.map(l=>`<tr><td>${new Date(l.t).toLocaleString()}</td><td>${esc(l.by)}</td><td>${esc(l.a)}</td></tr>`))}</table></div>`:'<p class="empty">No activity in this range yet. Actions by staff will show up here.</p>'};
+['a','b','w'].forEach(k=>$('#'+k).onchange=e=>{f[k]=e.target.value;if(f.a&&f.b&&f.a>f.b){f[k]='';e.target.value='';return mod('The start date is after the end date.')}L()});L()}
+if(t=='bor'){const p=S.bp||'7';R.innerHTML=`<label style="max-width:240px">Period<select id="p">${[['7','Last 7 days'],['30','Last 30 days'],['0','All time']].map(([v,l])=>`<option value="${v}" ${p==v?'selected':''}>${l}</option>`).join('')}</select></label><div id="br"></div>`;
+const L=()=>{const c=+p?plus(-p):'',x=DB.reqs.filter(r=>r.d>=c),n={};x.forEach(r=>n[bn(r)]=(n[bn(r)]||0)+1);const top=Object.entries(n).sort((a,b)=>b[1]-a[1]).slice(0,5);
+$('#br').innerHTML=`<div class="tw"><table><tr>${J(['PENDING','BORROWED','RETURNED','CANCELED','REJECTED'].map(s=>`<th>${s}</th>`))}</tr><tr>${J(['PENDING','BORROWED','RETURNED','CANCELED','REJECTED'].map(s=>`<td>${x.filter(r=>r.s==s).length}</td>`))}</tr></table></div><h3 style="margin:18px 0 6px">Most requested books</h3>${top.length?`<ol>${J(top.map(([k,v])=>`<li>${k} (${v})</li>`))}</ol>`:'<p class="empty">No requests in this period.</p>'}`};
+$('#p').onchange=e=>{S.bp=e.target.value;V.rep()};L()}
+if(t=='inv'){const g=(k,a)=>`<h3 style="margin:14px 0 6px">By ${k=='level'?'level':'category'}</h3><div class="tw"><table><tr><th>${k=='level'?'Level':'Category'}</th><th>Titles</th><th>Copies on shelf</th><th>Currently borrowed</th></tr>${J(a.map(v=>{const bs=DB.books.filter(b=>b[k]==v);return `<tr><td>${v}</td><td>${bs.length}</td><td>${bs.reduce((s,b)=>s+b.copies,0)}</td><td>${DB.reqs.filter(r=>r.s=='BORROWED'&&bs.some(b=>b.id==r.b)).length}</td></tr>`}))}</table></div>`;R.innerHTML=g('level',LV)+g('category',CT)}};
+
+/* ---------- change password ---------- */
+V.pw=()=>form('Change password',[['o','Current password','password'],['n','New password','password'],['c','Confirm new password','password']],async v=>{
+if(!v.o||!v.n||!v.c)return mod('Please fill in every field.');if(v.o!=me.pw)return mod('Your current password is incorrect.');if(v.n!=v.c)return mod('The new passwords do not match.');me.pw=v.n;sv();await mod('Password updated.');render()},()=>{S.tab=T[me.role][0][0];render()},'Update password');
+login();
+</script>
+</body>
+</html>
