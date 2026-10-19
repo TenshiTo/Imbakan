@@ -22,7 +22,7 @@
       padding: 12px;
     }
     .container {
-      max-width: 900px;
+      max-width: 1000px;
       margin: 0 auto;
       background: var(--card);
       padding: 20px;
@@ -88,10 +88,10 @@
     
     table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
     th, td { padding: 10px; border: 1px solid var(--border); text-align: left; }
-    th { background: #f8fafc; }
+    th { background: #f8fafc; font-size: 0.9rem; }
     td input, td select { width: 100%; box-sizing: border-box; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 1rem;}
     
-    @media screen and (max-width: 650px) {
+    @media screen and (max-width: 750px) {
       table { border: 0; }
       table thead { border: none; clip: rect(0 0 0 0); height: 1px; margin: -1px; overflow: hidden; padding: 0; position: absolute; width: 1px; }
       table tr { border-bottom: 3px solid var(--border); display: block; margin-bottom: 16px; padding: 12px; background: #f8fafc; border-radius: 8px;}
@@ -138,9 +138,7 @@
 <div class="container">
   <h1>Product Costing Dashboard</h1>
   
-  <div class="session-bar" id="sessionBar">
-    <button class="btn btn-add" onclick="createSession()">+ New Session</button>
-  </div>
+  <div class="session-bar" id="sessionBar"></div>
 
   <div id="sessionContent">
     <button class="btn btn-danger" onclick="deleteCurrentSession()">Delete Current Session</button>
@@ -163,10 +161,11 @@
     <table>
       <thead>
         <tr>
-          <th>Ingredient / Material</th>
+          <th>Ingredient</th>
           <th>Unit</th>
-          <th>Cost per Unit</th>
-          <th>Quantity Used</th>
+          <th>Pack Price (₱)</th>
+          <th>Pack Size</th>
+          <th>Qty Used</th>
           <th>Total Cost</th>
           <th>Action</th>
         </tr>
@@ -196,7 +195,7 @@
   let sessions = {};
   let currentSessionId = null;
   const unitsList = ["g", "kg", "ml", "L", "oz", "lb", "pcs", "cup", "tbsp", "tsp"];
-  const STORAGE_KEY = "offline_costing_data";
+  const STORAGE_KEY = "offline_costing_data_v2";
 
   // Initialize the App
   function initApp() {
@@ -216,7 +215,6 @@
     loadCurrentSessionData();
   }
 
-  // Save to browser memory
   function saveToLocal() {
     if (sessions && Object.keys(sessions).length > 0) {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(sessions));
@@ -236,7 +234,7 @@
       name: name,
       yieldQty: 10,
       markupPct: 50,
-      materials: [{ name: "Sample Item", unit: "pcs", cost: 1.5, qty: 2 }]
+      materials: [{ name: "Flour", unit: "g", packPrice: 100, packSize: 1000, qtyUsed: 250 }]
     };
     currentSessionId = id;
     saveToLocal();
@@ -251,7 +249,7 @@
     }
     if (confirm("Delete this session?")) {
       delete sessions[currentSessionId];
-      currentSessionId = Object.keys(sessions)[0]; // Switch to first available
+      currentSessionId = Object.keys(sessions)[0]; 
       saveToLocal();
       renderSessionsUI();
       loadCurrentSessionData();
@@ -274,6 +272,14 @@
     });
   }
 
+  // Calculate the cost of a single row based on pack price and size
+  function getRowCost(mat) {
+    const price = parseFloat(mat.packPrice) || 0;
+    const size = parseFloat(mat.packSize) || 1; // Default to 1 to prevent dividing by zero
+    const used = parseFloat(mat.qtyUsed) || 0;
+    return (price / size) * used;
+  }
+
   function loadCurrentSessionData() {
     const data = sessions[currentSessionId];
     if (!data) return;
@@ -294,9 +300,10 @@
             ${unitsList.map(u => `<option value="${u}" ${mat.unit === u ? 'selected' : ''}>${u}</option>`).join('')}
           </select>
         </td>
-        <td data-label="Cost/Unit"><input type="number" step="0.01" inputmode="decimal" value="${mat.cost}" oninput="updateMaterial(${idx}, 'cost', parseFloat(this.value)||0)"></td>
-        <td data-label="Qty Used"><input type="number" step="0.01" inputmode="decimal" value="${mat.qty}" oninput="updateMaterial(${idx}, 'qty', parseFloat(this.value)||0)"></td>
-        <td data-label="Total Cost" class="rowTotal">₱${((mat.cost || 0) * (mat.qty || 0)).toFixed(2)}</td>
+        <td data-label="Pack Price (₱)"><input type="number" step="0.01" inputmode="decimal" value="${mat.packPrice}" oninput="updateMaterial(${idx}, 'packPrice', this.value)"></td>
+        <td data-label="Pack Size"><input type="number" step="0.01" inputmode="decimal" value="${mat.packSize}" oninput="updateMaterial(${idx}, 'packSize', this.value)"></td>
+        <td data-label="Qty Used"><input type="number" step="0.01" inputmode="decimal" value="${mat.qtyUsed}" oninput="updateMaterial(${idx}, 'qtyUsed', this.value)"></td>
+        <td data-label="Total Cost" class="rowTotal">₱${getRowCost(mat).toFixed(2)}</td>
         <td data-label="Action"><button class="btn btn-danger" style="margin:0;" onclick="removeMaterial(${idx})">Delete</button></td>
       `;
       tbody.appendChild(row);
@@ -311,13 +318,13 @@
     sessions[currentSessionId].markupPct = parseFloat(document.getElementById('prodMarkup').value) || 0;
     
     saveToLocal();
-    renderSessionsUI(); // Update tab name if changed
-    calculateCosting(); // Update math if yield/markup changed
+    renderSessionsUI(); 
+    calculateCosting(); 
   };
 
   window.addMaterialRow = function() {
     if (!sessions[currentSessionId].materials) sessions[currentSessionId].materials = [];
-    sessions[currentSessionId].materials.push({ name: "", unit: "g", cost: 0, qty: 0 });
+    sessions[currentSessionId].materials.push({ name: "", unit: "g", packPrice: 0, packSize: 1, qtyUsed: 0 });
     saveToLocal();
     loadCurrentSessionData();
   };
@@ -332,15 +339,12 @@
     sessions[currentSessionId].materials[idx][key] = val;
     saveToLocal();
     
-    // If it's a number update, recalculate inline to feel instant
-    if(key === 'cost' || key === 'qty') {
+    if(key === 'packPrice' || key === 'packSize' || key === 'qtyUsed') {
       calculateCosting();
-      // Update that specific row's total visually without reloading whole table
       const rows = document.getElementById('materialsBody').getElementsByTagName('tr');
       if(rows[idx]) {
-        const cost = sessions[currentSessionId].materials[idx].cost || 0;
-        const qty = sessions[currentSessionId].materials[idx].qty || 0;
-        rows[idx].getElementsByClassName('rowTotal')[0].innerText = '₱' + (cost * qty).toFixed(2);
+        const mat = sessions[currentSessionId].materials[idx];
+        rows[idx].getElementsByClassName('rowTotal')[0].innerText = '₱' + getRowCost(mat).toFixed(2);
       }
     }
   };
@@ -351,7 +355,7 @@
 
     let batchTotal = 0;
     (sessions[currentSessionId].materials || []).forEach(m => {
-      batchTotal += (m.cost || 0) * (m.qty || 0);
+      batchTotal += getRowCost(m);
     });
 
     const costPerItem = batchTotal / yieldQty;
