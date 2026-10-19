@@ -152,11 +152,11 @@
       </div>
       <div class="input-card highlight">
         <label>Total Yield (Quantity Created)</label>
-        <input type="number" id="prodYield" value="10" min="1" inputmode="decimal" onchange="calculateCosting()">
+        <input type="number" id="prodYield" value="10" min="1" inputmode="decimal" onchange="updateSessionData()">
       </div>
       <div class="input-card highlight">
         <label>Markup Percentage (%)</label>
-        <input type="number" id="prodMarkup" value="50" min="0" inputmode="decimal" onchange="calculateCosting()">
+        <input type="number" id="prodMarkup" value="50" min="0" inputmode="decimal" onchange="updateSessionData()">
       </div>
     </div>
 
@@ -192,43 +192,45 @@
   </div>
 </div>
 
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-  import { getDatabase, ref, set, onValue, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
-
-  const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_PROJECT.firebaseapp.com",
-    databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
-    projectId: "YOUR_PROJECT",
-    storageBucket: "YOUR_PROJECT.appspot.com",
-    messagingSenderId: "SENDER_ID",
-    appId: "APP_ID"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const db = getDatabase(app);
-
+<script>
   let sessions = {};
   let currentSessionId = null;
   const unitsList = ["g", "kg", "ml", "L", "oz", "lb", "pcs", "cup", "tbsp", "tsp"];
+  const STORAGE_KEY = "offline_costing_data";
 
-  onValue(ref(db, 'costing_sessions'), (snapshot) => {
-    sessions = snapshot.val() || {};
-    const keys = Object.keys(sessions);
-    if (keys.length === 0) {
-      createSession("Default Product");
+  // Initialize the App
+  function initApp() {
+    const savedData = localStorage.getItem(STORAGE_KEY);
+    if (savedData) {
+      sessions = JSON.parse(savedData);
+      const keys = Object.keys(sessions);
+      if (keys.length > 0) {
+        currentSessionId = keys[0];
+      } else {
+        createSession("Default Product", false);
+      }
     } else {
-      if (!currentSessionId || !sessions[currentSessionId]) currentSessionId = keys[0];
-      renderSessionsUI();
-      loadCurrentSessionData();
+      createSession("Default Product", false);
     }
-  });
+    renderSessionsUI();
+    loadCurrentSessionData();
+  }
 
-  window.createSession = function(nameOverride) {
+  // Save to browser memory
+  function saveToLocal() {
+    if (sessions && Object.keys(sessions).length > 0) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(sessions));
+    }
+  }
+
+  window.createSession = function(nameOverride, doPrompt = true) {
     const id = 'session_' + Date.now();
-    const name = nameOverride || prompt("Enter new product/session name:", "New Item");
-    if (!name) return;
+    let name = nameOverride;
+    
+    if (doPrompt) {
+      name = prompt("Enter new product/session name:", "New Item");
+      if (!name) return;
+    }
 
     sessions[id] = {
       name: name,
@@ -237,7 +239,9 @@
       materials: [{ name: "Sample Item", unit: "pcs", cost: 1.5, qty: 2 }]
     };
     currentSessionId = id;
-    saveToCloud();
+    saveToLocal();
+    renderSessionsUI();
+    loadCurrentSessionData();
   };
 
   window.deleteCurrentSession = function() {
@@ -246,15 +250,13 @@
       return;
     }
     if (confirm("Delete this session?")) {
-      remove(ref(db, 'costing_sessions/' + currentSessionId));
-      currentSessionId = null;
+      delete sessions[currentSessionId];
+      currentSessionId = Object.keys(sessions)[0]; // Switch to first available
+      saveToLocal();
+      renderSessionsUI();
+      loadCurrentSessionData();
     }
   };
-
-  function saveToCloud() {
-    if (!currentSessionId) return;
-    set(ref(db, 'costing_sessions'), sessions);
-  }
 
   function renderSessionsUI() {
     const bar = document.getElementById('sessionBar');
@@ -263,7 +265,11 @@
       const tab = document.createElement('div');
       tab.className = `tab ${id === currentSessionId ? 'active' : ''}`;
       tab.innerText = sessions[id].name || "Item";
-      tab.onclick = () => { currentSessionId = id; renderSessionsUI(); loadCurrentSessionData(); };
+      tab.onclick = () => { 
+        currentSessionId = id; 
+        renderSessionsUI(); 
+        loadCurrentSessionData(); 
+      };
       bar.insertBefore(tab, bar.firstChild);
     });
   }
@@ -282,14 +288,14 @@
     (data.materials || []).forEach((mat, idx) => {
       const row = document.createElement('tr');
       row.innerHTML = `
-        <td data-label="Ingredient"><input type="text" value="${mat.name}" onchange="updateMaterial(${idx}, 'name', this.value)"></td>
+        <td data-label="Ingredient"><input type="text" value="${mat.name}" oninput="updateMaterial(${idx}, 'name', this.value)"></td>
         <td data-label="Unit">
           <select onchange="updateMaterial(${idx}, 'unit', this.value)">
             ${unitsList.map(u => `<option value="${u}" ${mat.unit === u ? 'selected' : ''}>${u}</option>`).join('')}
           </select>
         </td>
-        <td data-label="Cost/Unit"><input type="number" step="0.01" inputmode="decimal" value="${mat.cost}" onchange="updateMaterial(${idx}, 'cost', parseFloat(this.value)||0)"></td>
-        <td data-label="Qty Used"><input type="number" step="0.01" inputmode="decimal" value="${mat.qty}" onchange="updateMaterial(${idx}, 'qty', parseFloat(this.value)||0)"></td>
+        <td data-label="Cost/Unit"><input type="number" step="0.01" inputmode="decimal" value="${mat.cost}" oninput="updateMaterial(${idx}, 'cost', parseFloat(this.value)||0)"></td>
+        <td data-label="Qty Used"><input type="number" step="0.01" inputmode="decimal" value="${mat.qty}" oninput="updateMaterial(${idx}, 'qty', parseFloat(this.value)||0)"></td>
         <td data-label="Total Cost" class="rowTotal">₱${((mat.cost || 0) * (mat.qty || 0)).toFixed(2)}</td>
         <td data-label="Action"><button class="btn btn-danger" style="margin:0;" onclick="removeMaterial(${idx})">Delete</button></td>
       `;
@@ -299,33 +305,49 @@
   }
 
   window.updateSessionData = function() {
+    if(!sessions[currentSessionId]) return;
     sessions[currentSessionId].name = document.getElementById('prodName').value;
-    saveToCloud();
-    renderSessionsUI();
+    sessions[currentSessionId].yieldQty = parseFloat(document.getElementById('prodYield').value) || 1;
+    sessions[currentSessionId].markupPct = parseFloat(document.getElementById('prodMarkup').value) || 0;
+    
+    saveToLocal();
+    renderSessionsUI(); // Update tab name if changed
+    calculateCosting(); // Update math if yield/markup changed
   };
 
   window.addMaterialRow = function() {
     if (!sessions[currentSessionId].materials) sessions[currentSessionId].materials = [];
     sessions[currentSessionId].materials.push({ name: "", unit: "g", cost: 0, qty: 0 });
-    saveToCloud();
+    saveToLocal();
+    loadCurrentSessionData();
   };
 
   window.removeMaterial = function(idx) {
     sessions[currentSessionId].materials.splice(idx, 1);
-    saveToCloud();
+    saveToLocal();
+    loadCurrentSessionData();
   };
 
   window.updateMaterial = function(idx, key, val) {
     sessions[currentSessionId].materials[idx][key] = val;
-    saveToCloud();
+    saveToLocal();
+    
+    // If it's a number update, recalculate inline to feel instant
+    if(key === 'cost' || key === 'qty') {
+      calculateCosting();
+      // Update that specific row's total visually without reloading whole table
+      const rows = document.getElementById('materialsBody').getElementsByTagName('tr');
+      if(rows[idx]) {
+        const cost = sessions[currentSessionId].materials[idx].cost || 0;
+        const qty = sessions[currentSessionId].materials[idx].qty || 0;
+        rows[idx].getElementsByClassName('rowTotal')[0].innerText = '₱' + (cost * qty).toFixed(2);
+      }
+    }
   };
 
   window.calculateCosting = function() {
     const yieldQty = parseFloat(document.getElementById('prodYield').value) || 1;
     const markupPct = parseFloat(document.getElementById('prodMarkup').value) || 0;
-
-    sessions[currentSessionId].yieldQty = yieldQty;
-    sessions[currentSessionId].markupPct = markupPct;
 
     let batchTotal = 0;
     (sessions[currentSessionId].materials || []).forEach(m => {
@@ -339,8 +361,10 @@
     document.getElementById('costPerItem').innerText = `₱${costPerItem.toFixed(2)}`;
     document.getElementById('suggestedPrice').innerText = `₱${suggestedPrice.toFixed(2)}`;
   };
+
+  // Run on page load
+  initApp();
 </script>
 
 </body>
 </html>
- 
