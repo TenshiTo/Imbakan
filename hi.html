@@ -76,7 +76,7 @@
             box-sizing: border-box;
             background-color: white;
         }
-        button {
+        button.enter-btn {
             width: 100%;
             padding: 16px;
             background-color: #2563eb;
@@ -88,7 +88,7 @@
             cursor: pointer;
             margin-bottom: 30px;
         }
-        button:hover {
+        button.enter-btn:hover {
             background-color: #1d4ed8;
         }
         .history h2 {
@@ -102,6 +102,7 @@
         .entry {
             display: flex;
             justify-content: space-between;
+            align-items: center;
             padding: 12px 0;
             border-bottom: 1px solid #f8f9fa;
         }
@@ -109,9 +110,26 @@
             font-weight: 500;
             color: #495057;
         }
+        .entry-right {
+            display: flex;
+            align-items: center;
+        }
         .entry-qty {
             font-weight: bold;
             color: #2563eb;
+        }
+        .delete-btn {
+            background: none;
+            border: none;
+            color: #dc3545;
+            font-size: 14px;
+            cursor: pointer;
+            padding: 5px;
+            margin-left: 10px;
+            border-radius: 4px;
+        }
+        .delete-btn:hover {
+            background-color: #ffeeba;
         }
     </style>
 </head>
@@ -152,7 +170,7 @@
 
     <input type="number" id="quantity" value="1" min="1">
 
-    <button id="enter-btn">Enter Sale</button>
+    <button id="enter-btn" class="enter-btn">Enter Sale</button>
 
     <div class="history">
         <h2>Recent Entries</h2>
@@ -164,7 +182,7 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyAyUmdKe6CIH9mwa310erTIXMgmH23J3wU",
@@ -184,7 +202,6 @@
     const qtyInput = document.getElementById('quantity');
     const enterBtn = document.getElementById('enter-btn');
     
-    // Summary elements
     const plainDisplay = document.getElementById('plain-total');
     const ubeDisplay = document.getElementById('ube-total');
     const palamigDisplay = document.getElementById('palamig-total');
@@ -192,6 +209,7 @@
     const overallPriceDisplay = document.getElementById('overall-price');
     const entriesList = document.getElementById('entries-list');
 
+    // Add entry
     enterBtn.addEventListener('click', async () => {
         const item = itemSelect.value;
         const qty = parseInt(qtyInput.value);
@@ -216,6 +234,7 @@
         }
     });
 
+    // Listen for updates
     const q = query(salesCollection, orderBy("timestamp", "desc"));
     onSnapshot(q, (snapshot) => {
         entriesList.innerHTML = '';
@@ -237,8 +256,9 @@
             return;
         }
 
-        snapshot.forEach((doc) => {
-            const sale = doc.data();
+        snapshot.forEach((documentSnapshot) => {
+            const sale = documentSnapshot.data();
+            const docId = documentSnapshot.id;
             
             // Add to totals
             if (counts[sale.item] !== undefined) {
@@ -253,9 +273,27 @@
             
             div.innerHTML = `
                 <span class="entry-item">${sale.item} <span style="font-size:11px; color:#adb5bd; font-weight:normal;">(${timeString})</span></span>
-                <span class="entry-qty">${sale.quantity}</span>
+                <div class="entry-right">
+                    <span class="entry-qty">${sale.quantity}</span>
+                    <button class="delete-btn" data-id="${docId}" title="Delete entry">✖</button>
+                </div>
             `;
             entriesList.appendChild(div);
+        });
+
+        // Add event listeners to all delete buttons
+        const deleteButtons = document.querySelectorAll('.delete-btn');
+        deleteButtons.forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                if (confirm("Are you sure you want to delete this entry?")) {
+                    const id = e.target.getAttribute('data-id');
+                    try {
+                        await deleteDoc(doc(db, 'palitaw_sales', id));
+                    } catch (error) {
+                        alert("Error deleting: " + error.message);
+                    }
+                }
+            });
         });
 
         // Update displays
@@ -264,7 +302,7 @@
         palamigDisplay.innerText = counts["Palamig"];
         overallItemsDisplay.innerText = totalItems;
         
-        // Calculate prices (Plain: 5, Ube: 10, Palamig: 10)
+        // Calculate prices
         let totalPrice = (counts["Plain Palitaw"] * 5) + 
                          (counts["Ube Palitaw with Cheese"] * 10) + 
                          (counts["Palamig"] * 10);
