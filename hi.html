@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sales Tracker</title>
+    <title>Business Tracker</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -16,13 +16,39 @@
         }
         .container {
             background: white;
-            padding: 30px;
+            padding: 25px;
             border-radius: 12px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.05);
             width: 100%;
-            max-width: 400px;
+            max-width: 450px;
             box-sizing: border-box;
         }
+        
+        /* Navigation Menu */
+        .nav-menu {
+            display: flex;
+            background: #e9ecef;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        .nav-menu button {
+            flex: 1;
+            padding: 12px;
+            background: none;
+            border: none;
+            font-size: 14px;
+            font-weight: bold;
+            color: #6c757d;
+            cursor: pointer;
+            border-radius: 0;
+            margin-bottom: 0;
+        }
+        .nav-menu button.active {
+            background: #2563eb;
+            color: white;
+        }
+
         h1 {
             text-align: center;
             font-size: 16px;
@@ -30,7 +56,7 @@
             letter-spacing: 1px;
             text-transform: uppercase;
             margin-top: 0;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
         .summary-box {
             background: #f8f9fa;
@@ -76,7 +102,7 @@
             box-sizing: border-box;
             background-color: white;
         }
-        button.enter-btn {
+        button.action-btn {
             width: 100%;
             padding: 16px;
             background-color: #2563eb;
@@ -86,9 +112,9 @@
             font-size: 18px;
             font-weight: bold;
             cursor: pointer;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
         }
-        button.enter-btn:hover {
+        button.action-btn:hover {
             background-color: #1d4ed8;
         }
         .history h2 {
@@ -99,11 +125,29 @@
             padding-bottom: 10px;
             margin-bottom: 10px;
         }
+        
+        /* Daily Grouping Styles */
+        .date-header {
+            background: #e9ecef;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: bold;
+            color: #495057;
+            margin-top: 15px;
+            margin-bottom: 5px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .date-total {
+            color: #2563eb;
+        }
+
         .entry {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 12px 0;
+            padding: 10px 12px;
             border-bottom: 1px solid #f8f9fa;
         }
         .entry-item {
@@ -114,9 +158,12 @@
             display: flex;
             align-items: center;
         }
-        .entry-qty {
+        .entry-qty, .entry-amt {
             font-weight: bold;
             color: #2563eb;
+        }
+        .expense-amt {
+            color: #dc3545;
         }
         .delete-btn {
             background: none;
@@ -131,53 +178,105 @@
         .delete-btn:hover {
             background-color: #ffeeba;
         }
+        
+        .view-section {
+            display: none;
+        }
+        .view-section.active {
+            display: block;
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>Sales Tracker</h1>
     
-    <div class="summary-box">
-        <div class="summary-row">
-            <span>Plain Palitaw (₱5):</span>
-            <span id="plain-total">0</span>
+    <!-- Navigation Menu -->
+    <div class="nav-menu">
+        <button id="nav-sales" class="active">Sales Tracker</button>
+        <button id="nav-budget">Budget & Expenses</button>
+    </div>
+
+    <!-- ================= SALES TRACKER VIEW ================= -->
+    <div id="view-sales" class="view-section active">
+        <h1>Sales Tracker</h1>
+        
+        <div class="summary-box">
+            <div class="summary-row">
+                <span>Plain Palitaw (₱5):</span>
+                <span id="plain-total">0</span>
+            </div>
+            <div class="summary-row">
+                <span>Ube Palitaw (₱10):</span>
+                <span id="ube-total">0</span>
+            </div>
+            <div class="summary-row">
+                <span>Palamig (₱10):</span>
+                <span id="palamig-total">0</span>
+            </div>
+            <hr>
+            <div class="summary-row grand-total">
+                <span>Overall Items Sold:</span>
+                <span id="overall-items">0</span>
+            </div>
+            <div class="summary-row grand-total-price">
+                <span>Overall Sales:</span>
+                <span id="overall-price">₱0</span>
+            </div>
         </div>
-        <div class="summary-row">
-            <span>Ube Palitaw (₱10):</span>
-            <span id="ube-total">0</span>
-        </div>
-        <div class="summary-row">
-            <span>Palamig (₱10):</span>
-            <span id="palamig-total">0</span>
-        </div>
-        <hr>
-        <div class="summary-row grand-total">
-            <span>Total Items Sold:</span>
-            <span id="overall-items">0</span>
-        </div>
-        <div class="summary-row grand-total-price">
-            <span>Total Sales:</span>
-            <span id="overall-price">₱0</span>
+
+        <select id="item">
+            <option value="Plain Palitaw">Plain Palitaw</option>
+            <option value="Ube Palitaw with Cheese">Ube Palitaw with Cheese</option>
+            <option value="Palamig">Palamig</option>
+        </select>
+        <input type="number" id="quantity" value="1" min="1" placeholder="Quantity">
+        <button id="enter-sale-btn" class="action-btn">Enter Sale</button>
+
+        <div class="history">
+            <h2>Daily Records</h2>
+            <div id="sales-list">
+                <div style="text-align:center; color:#adb5bd; padding:20px 0;">Loading sales...</div>
+            </div>
         </div>
     </div>
 
-    <select id="item">
-        <option value="Plain Palitaw">Plain Palitaw</option>
-        <option value="Ube Palitaw with Cheese">Ube Palitaw with Cheese</option>
-        <option value="Palamig">Palamig</option>
-    </select>
+    <!-- ================= BUDGET & EXPENSE VIEW ================= -->
+    <div id="view-budget" class="view-section">
+        <h1>Budget & Expenses</h1>
+        
+        <div class="summary-box">
+            <div class="summary-row">
+                <span>Total Budget/Income:</span>
+                <span id="total-budget" style="color: #198754;">₱0</span>
+            </div>
+            <div class="summary-row">
+                <span>Total Expenses:</span>
+                <span id="total-expense" style="color: #dc3545;">₱0</span>
+            </div>
+            <hr>
+            <div class="summary-row grand-total-price">
+                <span>Remaining Balance:</span>
+                <span id="remaining-balance">₱0</span>
+            </div>
+        </div>
 
-    <input type="number" id="quantity" value="1" min="1">
+        <select id="finance-type">
+            <option value="budget">Add Budget / Income</option>
+            <option value="expense">Deduct Expense</option>
+        </select>
+        <input type="text" id="finance-desc" placeholder="Description (e.g. Ingredients, Starting Money)">
+        <input type="number" id="finance-amount" value="" min="1" placeholder="Amount (₱)">
+        <button id="enter-finance-btn" class="action-btn">Save Record</button>
 
-    <button id="enter-btn" class="enter-btn">Enter Sale</button>
-
-    <div class="history">
-        <h2>Recent Entries</h2>
-        <div id="entries-list">
-            <div style="text-align:center; color:#adb5bd; padding:20px 0;">Loading sales...</div>
+        <div class="history">
+            <h2>Financial History</h2>
+            <div id="finance-list">
+                <div style="text-align:center; color:#adb5bd; padding:20px 0;">Loading finances...</div>
+            </div>
         </div>
     </div>
+
 </div>
 
 <script type="module">
@@ -196,123 +295,198 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
-    const salesCollection = collection(db, 'palitaw_sales');
-
-    const itemSelect = document.getElementById('item');
-    const qtyInput = document.getElementById('quantity');
-    const enterBtn = document.getElementById('enter-btn');
     
-    const plainDisplay = document.getElementById('plain-total');
-    const ubeDisplay = document.getElementById('ube-total');
-    const palamigDisplay = document.getElementById('palamig-total');
-    const overallItemsDisplay = document.getElementById('overall-items');
-    const overallPriceDisplay = document.getElementById('overall-price');
-    const entriesList = document.getElementById('entries-list');
+    // Collections
+    const salesCollection = collection(db, 'palitaw_sales');
+    const financeCollection = collection(db, 'palitaw_finances');
 
-    // Add entry
-    enterBtn.addEventListener('click', async () => {
-        const item = itemSelect.value;
-        const qty = parseInt(qtyInput.value);
+    // === NAVIGATION LOGIC ===
+    const navSales = document.getElementById('nav-sales');
+    const navBudget = document.getElementById('nav-budget');
+    const viewSales = document.getElementById('view-sales');
+    const viewBudget = document.getElementById('view-budget');
+
+    navSales.addEventListener('click', () => {
+        navSales.classList.add('active');
+        navBudget.classList.remove('active');
+        viewSales.classList.add('active');
+        viewBudget.classList.remove('active');
+    });
+    navBudget.addEventListener('click', () => {
+        navBudget.classList.add('active');
+        navSales.classList.remove('active');
+        viewBudget.classList.add('active');
+        viewSales.classList.remove('active');
+    });
+
+
+    // === SALES TRACKER LOGIC ===
+    const enterSaleBtn = document.getElementById('enter-sale-btn');
+    const salesList = document.getElementById('sales-list');
+    
+    enterSaleBtn.addEventListener('click', async () => {
+        const item = document.getElementById('item').value;
+        const qty = parseInt(document.getElementById('quantity').value);
 
         if (qty > 0) {
-            enterBtn.innerText = "Saving...";
-            enterBtn.style.opacity = "0.7";
-            
+            enterSaleBtn.innerText = "Saving...";
             try {
-                await addDoc(salesCollection, {
-                    item: item,
-                    quantity: qty,
-                    timestamp: Date.now()
-                });
-                qtyInput.value = 1; 
-            } catch (e) {
-                alert("Error saving: " + e.message);
-            }
-            
-            enterBtn.innerText = "Enter Sale";
-            enterBtn.style.opacity = "1";
+                await addDoc(salesCollection, { item: item, quantity: qty, timestamp: Date.now() });
+                document.getElementById('quantity').value = 1; 
+            } catch (e) { alert("Error saving: " + e.message); }
+            enterSaleBtn.innerText = "Enter Sale";
         }
     });
 
-    // Listen for updates
-    const q = query(salesCollection, orderBy("timestamp", "desc"));
-    onSnapshot(q, (snapshot) => {
-        entriesList.innerHTML = '';
-        
-        let counts = {
-            "Plain Palitaw": 0,
-            "Ube Palitaw with Cheese": 0,
-            "Palamig": 0
-        };
+    onSnapshot(query(salesCollection, orderBy("timestamp", "desc")), (snapshot) => {
+        salesList.innerHTML = '';
+        let counts = { "Plain Palitaw": 0, "Ube Palitaw with Cheese": 0, "Palamig": 0 };
         let totalItems = 0;
         
         if (snapshot.empty) {
-            entriesList.innerHTML = '<div style="text-align:center; color:#adb5bd; padding:20px 0;">No sales yet.</div>';
-            plainDisplay.innerText = "0";
-            ubeDisplay.innerText = "0";
-            palamigDisplay.innerText = "0";
-            overallItemsDisplay.innerText = "0";
-            overallPriceDisplay.innerText = "₱0";
+            salesList.innerHTML = '<div style="text-align:center; color:#adb5bd; padding:20px 0;">No sales yet.</div>';
+            document.getElementById('overall-price').innerText = "₱0";
             return;
         }
+
+        // Object to group items by date
+        const groupedSales = {};
+        const dateOrder = [];
 
         snapshot.forEach((documentSnapshot) => {
             const sale = documentSnapshot.data();
             const docId = documentSnapshot.id;
             
-            // Add to totals
-            if (counts[sale.item] !== undefined) {
-                counts[sale.item] += sale.quantity;
-            }
+            // Overall totals
+            if (counts[sale.item] !== undefined) counts[sale.item] += sale.quantity;
             totalItems += sale.quantity;
             
-            // Build history list
-            const div = document.createElement('div');
-            div.className = 'entry';
-            const timeString = new Date(sale.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            // Grouping by Date
+            const dateObj = new Date(sale.timestamp);
+            const dateKey = dateObj.toLocaleDateString(undefined, { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' });
             
-            div.innerHTML = `
-                <span class="entry-item">${sale.item} <span style="font-size:11px; color:#adb5bd; font-weight:normal;">(${timeString})</span></span>
-                <div class="entry-right">
-                    <span class="entry-qty">${sale.quantity}</span>
-                    <button class="delete-btn" data-id="${docId}" title="Delete entry">✖</button>
-                </div>
-            `;
-            entriesList.appendChild(div);
+            // Determine price for this specific entry
+            let entryPrice = 0;
+            if (sale.item === "Plain Palitaw") entryPrice = sale.quantity * 5;
+            if (sale.item === "Ube Palitaw with Cheese" || sale.item === "Palamig") entryPrice = sale.quantity * 10;
+
+            if (!groupedSales[dateKey]) {
+                groupedSales[dateKey] = { list: [], dailyTotal: 0 };
+                dateOrder.push(dateKey);
+            }
+            groupedSales[dateKey].list.push({ id: docId, ...sale, entryPrice });
+            groupedSales[dateKey].dailyTotal += entryPrice;
         });
 
-        // Add event listeners to all delete buttons
-        const deleteButtons = document.querySelectorAll('.delete-btn');
-        deleteButtons.forEach(btn => {
-            btn.addEventListener('click', async (e) => {
-                if (confirm("Are you sure you want to delete this entry?")) {
-                    const id = e.target.getAttribute('data-id');
-                    try {
-                        await deleteDoc(doc(db, 'palitaw_sales', id));
-                    } catch (error) {
-                        alert("Error deleting: " + error.message);
-                    }
-                }
+        // Render the grouped list
+        dateOrder.forEach(date => {
+            // Date Header
+            const header = document.createElement('div');
+            header.className = 'date-header';
+            header.innerHTML = `${date} <span class="date-total">₱${groupedSales[date].dailyTotal}</span>`;
+            salesList.appendChild(header);
+
+            // Entries for that date
+            groupedSales[date].list.forEach(sale => {
+                const div = document.createElement('div');
+                div.className = 'entry';
+                const timeStr = new Date(sale.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                div.innerHTML = `
+                    <span class="entry-item">${sale.item} <span style="font-size:11px; color:#adb5bd; font-weight:normal;">(${timeStr})</span></span>
+                    <div class="entry-right">
+                        <span class="entry-qty">${sale.quantity}</span>
+                        <button class="delete-btn" onclick="deleteRecord('palitaw_sales', '${sale.id}')" title="Delete entry">✖</button>
+                    </div>
+                `;
+                salesList.appendChild(div);
             });
         });
 
-        // Update displays
-        plainDisplay.innerText = counts["Plain Palitaw"];
-        ubeDisplay.innerText = counts["Ube Palitaw with Cheese"];
-        palamigDisplay.innerText = counts["Palamig"];
-        overallItemsDisplay.innerText = totalItems;
-        
-        // Calculate prices
-        let totalPrice = (counts["Plain Palitaw"] * 5) + 
-                         (counts["Ube Palitaw with Cheese"] * 10) + 
-                         (counts["Palamig"] * 10);
-                         
-        overallPriceDisplay.innerText = "₱" + totalPrice;
-        
-    }, (error) => {
-        entriesList.innerHTML = `<div style="text-align:center; color:red; padding:20px 0;">Connection error. Please update your Firestore Rules.</div>`;
-        console.error("Firebase error:", error);
+        // Update overall displays
+        document.getElementById('plain-total').innerText = counts["Plain Palitaw"];
+        document.getElementById('ube-total').innerText = counts["Ube Palitaw with Cheese"];
+        document.getElementById('palamig-total').innerText = counts["Palamig"];
+        document.getElementById('overall-items').innerText = totalItems;
+        let totalPrice = (counts["Plain Palitaw"] * 5) + (counts["Ube Palitaw with Cheese"] * 10) + (counts["Palamig"] * 10);
+        document.getElementById('overall-price').innerText = "₱" + totalPrice;
     });
+
+
+    // === BUDGET & EXPENSE LOGIC ===
+    const enterFinanceBtn = document.getElementById('enter-finance-btn');
+    const financeList = document.getElementById('finance-list');
+
+    enterFinanceBtn.addEventListener('click', async () => {
+        const type = document.getElementById('finance-type').value;
+        const desc = document.getElementById('finance-desc').value || "No description";
+        const amt = parseFloat(document.getElementById('finance-amount').value);
+
+        if (amt > 0) {
+            enterFinanceBtn.innerText = "Saving...";
+            try {
+                await addDoc(financeCollection, { type: type, desc: desc, amount: amt, timestamp: Date.now() });
+                document.getElementById('finance-desc').value = "";
+                document.getElementById('finance-amount').value = "";
+            } catch (e) { alert("Error saving: " + e.message + ". Did you update Firestore rules?"); }
+            enterFinanceBtn.innerText = "Save Record";
+        }
+    });
+
+    onSnapshot(query(financeCollection, orderBy("timestamp", "desc")), (snapshot) => {
+        financeList.innerHTML = '';
+        let totalBudget = 0;
+        let totalExpense = 0;
+        
+        if (snapshot.empty) {
+            financeList.innerHTML = '<div style="text-align:center; color:#adb5bd; padding:20px 0;">No records yet.</div>';
+            document.getElementById('remaining-balance').innerText = "₱0";
+            return;
+        }
+
+        snapshot.forEach((documentSnapshot) => {
+            const data = documentSnapshot.data();
+            
+            if (data.type === 'budget') totalBudget += data.amount;
+            if (data.type === 'expense') totalExpense += data.amount;
+            
+            const div = document.createElement('div');
+            div.className = 'entry';
+            const dateStr = new Date(data.timestamp).toLocaleDateString([], {month:'short', day:'numeric'});
+            const timeStr = new Date(data.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            
+            const isExpense = data.type === 'expense';
+            const amtClass = isExpense ? 'expense-amt' : 'entry-amt';
+            const sign = isExpense ? '-' : '+';
+
+            div.innerHTML = `
+                <span class="entry-item">${data.desc} <span style="font-size:11px; color:#adb5bd; font-weight:normal;">(${dateStr} ${timeStr})</span></span>
+                <div class="entry-right">
+                    <span class="${amtClass}">${sign}₱${data.amount}</span>
+                    <button class="delete-btn" onclick="deleteRecord('palitaw_finances', '${documentSnapshot.id}')">✖</button>
+                </div>
+            `;
+            financeList.appendChild(div);
+        });
+
+        document.getElementById('total-budget').innerText = "₱" + totalBudget;
+        document.getElementById('total-expense').innerText = "₱" + totalExpense;
+        
+        const balance = totalBudget - totalExpense;
+        const balanceEl = document.getElementById('remaining-balance');
+        balanceEl.innerText = "₱" + balance;
+        balanceEl.style.color = balance < 0 ? "#dc3545" : "#2563eb";
+    });
+
+    // Global delete function
+    window.deleteRecord = async function(collectionName, id) {
+        if (confirm("Are you sure you want to delete this entry?")) {
+            try {
+                await deleteDoc(doc(db, collectionName, id));
+            } catch (error) {
+                alert("Error deleting: " + error.message);
+            }
+        }
+    };
 </script>
 
 </body>
