@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,196 +6,94 @@
     <title>Sales Tracker</title>
     <style>
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #f9fafb;
-            color: #111827;
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
             margin: 0;
             padding: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            min-height: 100vh;
-            box-sizing: border-box;
         }
-
         .container {
             background: white;
             padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
             width: 100%;
             max-width: 400px;
             box-sizing: border-box;
-            border: 1px solid #e5e7eb;
-            margin-top: 20px;
         }
-
         h1 {
             text-align: center;
-            font-size: 14px;
-            text-transform: uppercase;
+            font-size: 16px;
+            color: #6c757d;
             letter-spacing: 1px;
-            color: #6b7280;
+            text-transform: uppercase;
             margin-top: 0;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
-
         .total-box {
             text-align: center;
             margin-bottom: 30px;
         }
-
-        .total-label {
+        .total-box span.label {
+            display: block;
             font-size: 14px;
-            color: #9ca3af;
+            color: #adb5bd;
             margin-bottom: 5px;
         }
-
-        .total-number {
-            font-size: 60px;
-            font-weight: 800;
-            color: #111827;
-            line-height: 1;
+        .total-box span.number {
+            display: block;
+            font-size: 48px;
+            font-weight: bold;
+            color: #1a1e29;
         }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        select, input[type="number"] {
+        select, input {
             width: 100%;
             padding: 15px;
-            border: 1px solid #d1d5db;
-            border-radius: 6px;
-            font-size: 18px;
+            margin-bottom: 15px;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            font-size: 16px;
             box-sizing: border-box;
-            background-color: #ffffff;
-            color: #374151;
-            transition: border-color 0.2s;
+            background-color: white;
         }
-
-        select:focus, input[type="number"]:focus {
-            outline: none;
-            border-color: #2563eb;
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-        }
-
-        input[type="number"] {
-            text-align: center;
-            font-size: 20px;
-        }
-
-        .enter-btn {
+        button {
             width: 100%;
-            padding: 18px;
+            padding: 16px;
             background-color: #2563eb;
             color: white;
             border: none;
-            border-radius: 6px;
-            font-size: 20px;
+            border-radius: 8px;
+            font-size: 18px;
             font-weight: bold;
             cursor: pointer;
-            margin-top: 5px;
             margin-bottom: 30px;
-            transition: background-color 0.2s;
-            box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);
         }
-
-        .enter-btn:hover {
+        button:hover {
             background-color: #1d4ed8;
         }
-        
-        .enter-btn:disabled {
-            background-color: #93c5fd;
-            cursor: not-allowed;
-            box-shadow: none;
-        }
-
         .history h2 {
             font-size: 12px;
+            color: #adb5bd;
             text-transform: uppercase;
-            color: #9ca3af;
-            border-bottom: 1px solid #f3f4f6;
-            padding-bottom: 8px;
+            border-bottom: 1px solid #f1f3f5;
+            padding-bottom: 10px;
             margin-bottom: 10px;
         }
-
-        .entries-list {
-            max-height: 250px;
-            overflow-y: auto;
-            margin-bottom: 25px;
-            padding-right: 5px;
-        }
-
         .entry {
             display: flex;
             justify-content: space-between;
-            align-items: center;
             padding: 12px 0;
-            border-bottom: 1px solid #f9fafb;
+            border-bottom: 1px solid #f8f9fa;
         }
-        
-        .entry:last-child {
-            border-bottom: none;
-        }
-
-        .entry-main {
+        .entry-item {
             font-weight: 500;
-            color: #1f2937;
+            color: #495057;
         }
-
-        .entry-time {
-            font-size: 12px;
-            color: #9ca3af;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 20px 0;
-            color: #9ca3af;
-            font-size: 14px;
-        }
-
-        .share-section {
-            border-top: 1px solid #f3f4f6;
-            padding-top: 20px;
-            text-align: center;
-        }
-
-        .share-label {
-            font-size: 12px;
-            color: #9ca3af;
-            margin-bottom: 8px;
-        }
-
-        .share-controls {
-            display: flex;
-            gap: 8px;
-        }
-
-        .share-input {
-            flex: 1;
-            padding: 8px;
-            font-size: 12px;
-            border: 1px solid #e5e7eb;
-            border-radius: 4px;
-            background-color: #f9fafb;
-            color: #6b7280;
-        }
-
-        .copy-btn {
-            padding: 8px 16px;
-            background-color: #e5e7eb;
-            color: #374151;
-            border: none;
-            border-radius: 4px;
-            font-size: 12px;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-
-        .copy-btn:hover {
-            background-color: #d1d5db;
+        .entry-qty {
+            font-weight: bold;
+            color: #2563eb;
         }
     </style>
 </head>
@@ -206,214 +103,110 @@
     <h1>Sales Tracker</h1>
     
     <div class="total-box">
-        <div class="total-label">Total Items Sold</div>
-        <div class="total-number" id="total-count">0</div>
+        <span class="label">Total Items Sold</span>
+        <span class="number" id="total-count">0</span>
     </div>
 
-    <div class="form-group">
-        <select id="item">
-            <option value="Plain Palitaw">Plain Palitaw</option>
-            <option value="Ube Palitaw with Cheese">Ube Palitaw with Cheese</option>
-            <option value="Palamig">Palamig</option>
-        </select>
-    </div>
+    <select id="item">
+        <option value="Plain Palitaw">Plain Palitaw</option>
+        <option value="Ube Palitaw with Cheese">Ube Palitaw with Cheese</option>
+        <option value="Palamig">Palamig</option>
+    </select>
 
-    <div class="form-group">
-        <input type="number" id="quantity" value="" placeholder="Qty..." min="1">
-    </div>
+    <input type="number" id="quantity" value="1" min="1">
 
-    <button id="enter-btn" class="enter-btn">Enter Sale</button>
+    <button id="enter-btn">Enter Sale</button>
 
     <div class="history">
         <h2>Recent Entries</h2>
-        <div id="entries-list" class="entries-list">
-            <div class="empty-state" id="empty-state">Loading sales...</div>
-        </div>
-    </div>
-
-    <div class="share-section">
-        <div class="share-label">Access on another device:</div>
-        <div class="share-controls">
-            <input type="text" id="share-url" class="share-input" readonly value="Loading...">
-            <button id="copy-btn" class="copy-btn">Copy</button>
+        <div id="entries-list">
+            <div style="text-align:center; color:#adb5bd; padding:20px 0;">Loading sales...</div>
         </div>
     </div>
 </div>
 
 <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import { getFirestore, collection, addDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
+    import { getFirestore, collection, addDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
 
-    // Global environment variables provided by the sandbox
-    const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-    const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : { projectId: "demo-project" };
-    const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+    const firebaseConfig = {
+        apiKey: "AIzaSyAyUmdKe6CIH9mwa310erTIXMgmH23J3wU",
+        authDomain: "loan-app-ed340.firebaseapp.com",
+        projectId: "loan-app-ed340",
+        storageBucket: "loan-app-ed340.firebasestorage.app",
+        messagingSenderId: "7965113832",
+        appId: "1:7965113832:web:56bdbd00c5e213199b785d",
+        measurementId: "G-EHH9EDJRMZ"
+    };
 
-    // Handle Tracker ID in URL
-    let trackerId = new URLSearchParams(window.location.search).get('id');
-    if (!trackerId) {
-        trackerId = Math.random().toString(36).substring(2, 10);
-        const newUrl = new URL(window.location);
-        newUrl.searchParams.set('id', trackerId);
-        window.history.replaceState({}, '', newUrl);
-    }
-
-    // UI Elements
-    const shareUrlInput = document.getElementById('share-url');
-    shareUrlInput.value = window.location.href;
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    
+    // EXPLICITLY USING A NEW, SEPARATE COLLECTION
+    const salesCollection = collection(db, 'palitaw_sales');
 
     const itemSelect = document.getElementById('item');
     const qtyInput = document.getElementById('quantity');
     const enterBtn = document.getElementById('enter-btn');
     const totalCountDisplay = document.getElementById('total-count');
     const entriesList = document.getElementById('entries-list');
-    const copyBtn = document.getElementById('copy-btn');
 
-    let collectionRef = null;
-
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const auth = getAuth(app);
-
-    async function initAuthAndData() {
-        try {
-            // Authenticate first
-            if (initialAuthToken) {
-                await signInWithCustomToken(auth, initialAuthToken);
-            } else {
-                await signInAnonymously(auth);
-            }
-
-            if (!auth.currentUser) return;
-
-            // Prepare collection reference using the strict public path
-            const collectionName = `sales_${trackerId}`;
-            collectionRef = collection(db, 'artifacts', appId, 'public', 'data', collectionName);
-
-            // Fetch data and listen for changes
-            onSnapshot(collectionRef, (snapshot) => {
-                const sales = [];
-                let totalItems = 0;
-
-                snapshot.forEach((doc) => {
-                    const data = doc.data();
-                    sales.push(data);
-                    totalItems += data.quantity;
-                });
-
-                // Sort by newest first in memory
-                sales.sort((a, b) => b.timestamp - a.timestamp);
-                
-                // Update UI
-                totalCountDisplay.innerText = totalItems;
-                renderSales(sales);
-
-            }, (error) => {
-                console.error("Error fetching data:", error);
-                entriesList.innerHTML = `<div class="empty-state">Error loading data.</div>`;
-            });
-
-        } catch (error) {
-            console.error("Auth error:", error);
-            entriesList.innerHTML = `<div class="empty-state">Cannot connect to server.</div>`;
-        }
-    }
-
-    function renderSales(sales) {
-        entriesList.innerHTML = '';
-        
-        if (sales.length === 0) {
-            entriesList.innerHTML = `<div class="empty-state">No sales recorded yet.</div>`;
-            return;
-        }
-
-        sales.forEach(sale => {
-            const div = document.createElement('div');
-            div.className = 'entry';
-            
-            const mainSpan = document.createElement('span');
-            mainSpan.className = 'entry-main';
-            mainSpan.textContent = `+${sale.quantity} ${sale.item}`;
-
-            const timeSpan = document.createElement('span');
-            timeSpan.className = 'entry-time';
-            timeSpan.textContent = sale.timeString;
-
-            div.appendChild(mainSpan);
-            div.appendChild(timeSpan);
-            entriesList.appendChild(div);
-        });
-    }
-
-    // Handle Entry
-    async function handleAddSale() {
+    enterBtn.addEventListener('click', async () => {
         const item = itemSelect.value;
-        const qty = parseInt(qtyInput.value, 10);
+        const qty = parseInt(qtyInput.value);
 
-        if (!qty || qty <= 0) {
-            qtyInput.focus();
-            return;
-        }
-
-        enterBtn.disabled = true;
-        enterBtn.textContent = 'Saving...';
-        
-        const now = new Date();
-        const timeString = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-
-        try {
-            if (collectionRef) {
-                await addDoc(collectionRef, {
+        if (qty > 0) {
+            enterBtn.innerText = "Saving...";
+            enterBtn.style.opacity = "0.7";
+            
+            try {
+                await addDoc(salesCollection, {
                     item: item,
                     quantity: qty,
-                    timeString: timeString,
-                    timestamp: now.getTime()
+                    timestamp: Date.now()
                 });
+                qtyInput.value = 1; 
+            } catch (e) {
+                alert("Error saving: " + e.message);
             }
-            qtyInput.value = '';
-            qtyInput.focus();
-        } catch (error) {
-            console.error("Error saving:", error);
-        } finally {
-            enterBtn.disabled = false;
-            enterBtn.textContent = 'Enter Sale';
-        }
-    }
-
-    enterBtn.addEventListener('click', handleAddSale);
-    
-    // Press Enter to submit
-    qtyInput.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            handleAddSale();
+            
+            enterBtn.innerText = "Enter Sale";
+            enterBtn.style.opacity = "1";
         }
     });
 
-    // Handle Copy button
-    copyBtn.addEventListener('click', () => {
-        document.execCommand('copy'); // Fallback
-        navigator.clipboard.writeText(shareUrlInput.value).then(() => {
-            const originalText = copyBtn.textContent;
-            copyBtn.textContent = 'Copied!';
-            copyBtn.style.backgroundColor = '#d1fae5';
-            copyBtn.style.color = '#065f46';
-            setTimeout(() => {
-                copyBtn.textContent = originalText;
-                copyBtn.style.backgroundColor = '';
-                copyBtn.style.color = '';
-            }, 2000);
+    const q = query(salesCollection, orderBy("timestamp", "desc"));
+    onSnapshot(q, (snapshot) => {
+        entriesList.innerHTML = '';
+        let totalItems = 0;
+        
+        if (snapshot.empty) {
+            entriesList.innerHTML = '<div style="text-align:center; color:#adb5bd; padding:20px 0;">No sales yet.</div>';
+            totalCountDisplay.innerText = "0";
+            return;
+        }
+
+        snapshot.forEach((doc) => {
+            const sale = doc.data();
+            totalItems += sale.quantity;
+            
+            const div = document.createElement('div');
+            div.className = 'entry';
+            const timeString = new Date(sale.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            
+            div.innerHTML = `
+                <span class="entry-item">${sale.item} <span style="font-size:11px; color:#adb5bd; font-weight:normal;">(${timeString})</span></span>
+                <span class="entry-qty">${sale.quantity}</span>
+            `;
+            entriesList.appendChild(div);
         });
-    });
 
-    // Start App
-    window.onload = () => {
-        qtyInput.focus();
-        initAuthAndData();
-    };
+        totalCountDisplay.innerText = totalItems;
+    }, (error) => {
+        entriesList.innerHTML = `<div style="text-align:center; color:red; padding:20px 0;">Connection error. Please check your rules.</div>`;
+        console.error("Firebase error:", error);
+    });
 </script>
 
 </body>
 </html>
-```
