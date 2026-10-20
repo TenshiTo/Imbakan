@@ -1,0 +1,419 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Tracker</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f9fafb;
+            color: #111827;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+            width: 100%;
+            max-width: 400px;
+            box-sizing: border-box;
+            border: 1px solid #e5e7eb;
+            margin-top: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #6b7280;
+            margin-top: 0;
+            margin-bottom: 25px;
+        }
+
+        .total-box {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .total-label {
+            font-size: 14px;
+            color: #9ca3af;
+            margin-bottom: 5px;
+        }
+
+        .total-number {
+            font-size: 60px;
+            font-weight: 800;
+            color: #111827;
+            line-height: 1;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        select, input[type="number"] {
+            width: 100%;
+            padding: 15px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 18px;
+            box-sizing: border-box;
+            background-color: #ffffff;
+            color: #374151;
+            transition: border-color 0.2s;
+        }
+
+        select:focus, input[type="number"]:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        input[type="number"] {
+            text-align: center;
+            font-size: 20px;
+        }
+
+        .enter-btn {
+            width: 100%;
+            padding: 18px;
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 5px;
+            margin-bottom: 30px;
+            transition: background-color 0.2s;
+            box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);
+        }
+
+        .enter-btn:hover {
+            background-color: #1d4ed8;
+        }
+        
+        .enter-btn:disabled {
+            background-color: #93c5fd;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .history h2 {
+            font-size: 12px;
+            text-transform: uppercase;
+            color: #9ca3af;
+            border-bottom: 1px solid #f3f4f6;
+            padding-bottom: 8px;
+            margin-bottom: 10px;
+        }
+
+        .entries-list {
+            max-height: 250px;
+            overflow-y: auto;
+            margin-bottom: 25px;
+            padding-right: 5px;
+        }
+
+        .entry {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #f9fafb;
+        }
+        
+        .entry:last-child {
+            border-bottom: none;
+        }
+
+        .entry-main {
+            font-weight: 500;
+            color: #1f2937;
+        }
+
+        .entry-time {
+            font-size: 12px;
+            color: #9ca3af;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 20px 0;
+            color: #9ca3af;
+            font-size: 14px;
+        }
+
+        .share-section {
+            border-top: 1px solid #f3f4f6;
+            padding-top: 20px;
+            text-align: center;
+        }
+
+        .share-label {
+            font-size: 12px;
+            color: #9ca3af;
+            margin-bottom: 8px;
+        }
+
+        .share-controls {
+            display: flex;
+            gap: 8px;
+        }
+
+        .share-input {
+            flex: 1;
+            padding: 8px;
+            font-size: 12px;
+            border: 1px solid #e5e7eb;
+            border-radius: 4px;
+            background-color: #f9fafb;
+            color: #6b7280;
+        }
+
+        .copy-btn {
+            padding: 8px 16px;
+            background-color: #e5e7eb;
+            color: #374151;
+            border: none;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .copy-btn:hover {
+            background-color: #d1d5db;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Sales Tracker</h1>
+    
+    <div class="total-box">
+        <div class="total-label">Total Items Sold</div>
+        <div class="total-number" id="total-count">0</div>
+    </div>
+
+    <div class="form-group">
+        <select id="item">
+            <option value="Plain Palitaw">Plain Palitaw</option>
+            <option value="Ube Palitaw with Cheese">Ube Palitaw with Cheese</option>
+            <option value="Palamig">Palamig</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <input type="number" id="quantity" value="" placeholder="Qty..." min="1">
+    </div>
+
+    <button id="enter-btn" class="enter-btn">Enter Sale</button>
+
+    <div class="history">
+        <h2>Recent Entries</h2>
+        <div id="entries-list" class="entries-list">
+            <div class="empty-state" id="empty-state">Loading sales...</div>
+        </div>
+    </div>
+
+    <div class="share-section">
+        <div class="share-label">Access on another device:</div>
+        <div class="share-controls">
+            <input type="text" id="share-url" class="share-input" readonly value="Loading...">
+            <button id="copy-btn" class="copy-btn">Copy</button>
+        </div>
+    </div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, collection, addDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    // Global environment variables provided by the sandbox
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+    const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : { projectId: "demo-project" };
+    const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+    // Handle Tracker ID in URL
+    let trackerId = new URLSearchParams(window.location.search).get('id');
+    if (!trackerId) {
+        trackerId = Math.random().toString(36).substring(2, 10);
+        const newUrl = new URL(window.location);
+        newUrl.searchParams.set('id', trackerId);
+        window.history.replaceState({}, '', newUrl);
+    }
+
+    // UI Elements
+    const shareUrlInput = document.getElementById('share-url');
+    shareUrlInput.value = window.location.href;
+
+    const itemSelect = document.getElementById('item');
+    const qtyInput = document.getElementById('quantity');
+    const enterBtn = document.getElementById('enter-btn');
+    const totalCountDisplay = document.getElementById('total-count');
+    const entriesList = document.getElementById('entries-list');
+    const copyBtn = document.getElementById('copy-btn');
+
+    let collectionRef = null;
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    async function initAuthAndData() {
+        try {
+            // Authenticate first
+            if (initialAuthToken) {
+                await signInWithCustomToken(auth, initialAuthToken);
+            } else {
+                await signInAnonymously(auth);
+            }
+
+            if (!auth.currentUser) return;
+
+            // Prepare collection reference using the strict public path
+            const collectionName = `sales_${trackerId}`;
+            collectionRef = collection(db, 'artifacts', appId, 'public', 'data', collectionName);
+
+            // Fetch data and listen for changes
+            onSnapshot(collectionRef, (snapshot) => {
+                const sales = [];
+                let totalItems = 0;
+
+                snapshot.forEach((doc) => {
+                    const data = doc.data();
+                    sales.push(data);
+                    totalItems += data.quantity;
+                });
+
+                // Sort by newest first in memory
+                sales.sort((a, b) => b.timestamp - a.timestamp);
+                
+                // Update UI
+                totalCountDisplay.innerText = totalItems;
+                renderSales(sales);
+
+            }, (error) => {
+                console.error("Error fetching data:", error);
+                entriesList.innerHTML = `<div class="empty-state">Error loading data.</div>`;
+            });
+
+        } catch (error) {
+            console.error("Auth error:", error);
+            entriesList.innerHTML = `<div class="empty-state">Cannot connect to server.</div>`;
+        }
+    }
+
+    function renderSales(sales) {
+        entriesList.innerHTML = '';
+        
+        if (sales.length === 0) {
+            entriesList.innerHTML = `<div class="empty-state">No sales recorded yet.</div>`;
+            return;
+        }
+
+        sales.forEach(sale => {
+            const div = document.createElement('div');
+            div.className = 'entry';
+            
+            const mainSpan = document.createElement('span');
+            mainSpan.className = 'entry-main';
+            mainSpan.textContent = `+${sale.quantity} ${sale.item}`;
+
+            const timeSpan = document.createElement('span');
+            timeSpan.className = 'entry-time';
+            timeSpan.textContent = sale.timeString;
+
+            div.appendChild(mainSpan);
+            div.appendChild(timeSpan);
+            entriesList.appendChild(div);
+        });
+    }
+
+    // Handle Entry
+    async function handleAddSale() {
+        const item = itemSelect.value;
+        const qty = parseInt(qtyInput.value, 10);
+
+        if (!qty || qty <= 0) {
+            qtyInput.focus();
+            return;
+        }
+
+        enterBtn.disabled = true;
+        enterBtn.textContent = 'Saving...';
+        
+        const now = new Date();
+        const timeString = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+
+        try {
+            if (collectionRef) {
+                await addDoc(collectionRef, {
+                    item: item,
+                    quantity: qty,
+                    timeString: timeString,
+                    timestamp: now.getTime()
+                });
+            }
+            qtyInput.value = '';
+            qtyInput.focus();
+        } catch (error) {
+            console.error("Error saving:", error);
+        } finally {
+            enterBtn.disabled = false;
+            enterBtn.textContent = 'Enter Sale';
+        }
+    }
+
+    enterBtn.addEventListener('click', handleAddSale);
+    
+    // Press Enter to submit
+    qtyInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            handleAddSale();
+        }
+    });
+
+    // Handle Copy button
+    copyBtn.addEventListener('click', () => {
+        document.execCommand('copy'); // Fallback
+        navigator.clipboard.writeText(shareUrlInput.value).then(() => {
+            const originalText = copyBtn.textContent;
+            copyBtn.textContent = 'Copied!';
+            copyBtn.style.backgroundColor = '#d1fae5';
+            copyBtn.style.color = '#065f46';
+            setTimeout(() => {
+                copyBtn.textContent = originalText;
+                copyBtn.style.backgroundColor = '';
+                copyBtn.style.color = '';
+            }, 2000);
+        });
+    });
+
+    // Start App
+    window.onload = () => {
+        qtyInput.focus();
+        initAuthAndData();
+    };
+</script>
+
+</body>
+</html>
+```
