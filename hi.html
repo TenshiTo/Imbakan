@@ -32,21 +32,39 @@
             margin-top: 0;
             margin-bottom: 20px;
         }
-        .total-box {
-            text-align: center;
-            margin-bottom: 30px;
+        .summary-box {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #e9ecef;
         }
-        .total-box span.label {
-            display: block;
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
             font-size: 14px;
-            color: #adb5bd;
-            margin-bottom: 5px;
+            color: #495057;
+            margin-bottom: 8px;
         }
-        .total-box span.number {
-            display: block;
-            font-size: 48px;
+        .summary-row span:last-child {
             font-weight: bold;
-            color: #1a1e29;
+            color: #212529;
+        }
+        .summary-box hr {
+            border: 0;
+            border-top: 1px solid #dee2e6;
+            margin: 10px 0;
+        }
+        .grand-total {
+            font-size: 16px;
+            color: #212529;
+            font-weight: bold;
+        }
+        .grand-total-price {
+            font-size: 22px;
+            color: #2563eb;
+            font-weight: bold;
+            margin-top: 5px;
         }
         select, input {
             width: 100%;
@@ -102,9 +120,28 @@
 <div class="container">
     <h1>Sales Tracker</h1>
     
-    <div class="total-box">
-        <span class="label">Total Items Sold</span>
-        <span class="number" id="total-count">0</span>
+    <div class="summary-box">
+        <div class="summary-row">
+            <span>Plain Palitaw (₱5):</span>
+            <span id="plain-total">0</span>
+        </div>
+        <div class="summary-row">
+            <span>Ube Palitaw (₱10):</span>
+            <span id="ube-total">0</span>
+        </div>
+        <div class="summary-row">
+            <span>Palamig (₱10):</span>
+            <span id="palamig-total">0</span>
+        </div>
+        <hr>
+        <div class="summary-row grand-total">
+            <span>Total Items Sold:</span>
+            <span id="overall-items">0</span>
+        </div>
+        <div class="summary-row grand-total-price">
+            <span>Total Sales:</span>
+            <span id="overall-price">₱0</span>
+        </div>
     </div>
 
     <select id="item">
@@ -141,14 +178,18 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
-    
-    // EXPLICITLY USING A NEW, SEPARATE COLLECTION
     const salesCollection = collection(db, 'palitaw_sales');
 
     const itemSelect = document.getElementById('item');
     const qtyInput = document.getElementById('quantity');
     const enterBtn = document.getElementById('enter-btn');
-    const totalCountDisplay = document.getElementById('total-count');
+    
+    // Summary elements
+    const plainDisplay = document.getElementById('plain-total');
+    const ubeDisplay = document.getElementById('ube-total');
+    const palamigDisplay = document.getElementById('palamig-total');
+    const overallItemsDisplay = document.getElementById('overall-items');
+    const overallPriceDisplay = document.getElementById('overall-price');
     const entriesList = document.getElementById('entries-list');
 
     enterBtn.addEventListener('click', async () => {
@@ -178,18 +219,34 @@
     const q = query(salesCollection, orderBy("timestamp", "desc"));
     onSnapshot(q, (snapshot) => {
         entriesList.innerHTML = '';
+        
+        let counts = {
+            "Plain Palitaw": 0,
+            "Ube Palitaw with Cheese": 0,
+            "Palamig": 0
+        };
         let totalItems = 0;
         
         if (snapshot.empty) {
             entriesList.innerHTML = '<div style="text-align:center; color:#adb5bd; padding:20px 0;">No sales yet.</div>';
-            totalCountDisplay.innerText = "0";
+            plainDisplay.innerText = "0";
+            ubeDisplay.innerText = "0";
+            palamigDisplay.innerText = "0";
+            overallItemsDisplay.innerText = "0";
+            overallPriceDisplay.innerText = "₱0";
             return;
         }
 
         snapshot.forEach((doc) => {
             const sale = doc.data();
+            
+            // Add to totals
+            if (counts[sale.item] !== undefined) {
+                counts[sale.item] += sale.quantity;
+            }
             totalItems += sale.quantity;
             
+            // Build history list
             const div = document.createElement('div');
             div.className = 'entry';
             const timeString = new Date(sale.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
@@ -201,9 +258,21 @@
             entriesList.appendChild(div);
         });
 
-        totalCountDisplay.innerText = totalItems;
+        // Update displays
+        plainDisplay.innerText = counts["Plain Palitaw"];
+        ubeDisplay.innerText = counts["Ube Palitaw with Cheese"];
+        palamigDisplay.innerText = counts["Palamig"];
+        overallItemsDisplay.innerText = totalItems;
+        
+        // Calculate prices (Plain: 5, Ube: 10, Palamig: 10)
+        let totalPrice = (counts["Plain Palitaw"] * 5) + 
+                         (counts["Ube Palitaw with Cheese"] * 10) + 
+                         (counts["Palamig"] * 10);
+                         
+        overallPriceDisplay.innerText = "₱" + totalPrice;
+        
     }, (error) => {
-        entriesList.innerHTML = `<div style="text-align:center; color:red; padding:20px 0;">Connection error. Please check your rules.</div>`;
+        entriesList.innerHTML = `<div style="text-align:center; color:red; padding:20px 0;">Connection error. Please update your Firestore Rules.</div>`;
         console.error("Firebase error:", error);
     });
 </script>
