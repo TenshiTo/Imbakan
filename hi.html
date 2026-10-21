@@ -247,6 +247,10 @@
         
         <div class="summary-box">
             <div class="summary-row">
+                <span>Capital:</span>
+                <span style="color: #0d6efd;">₱800</span>
+            </div>
+            <div class="summary-row">
                 <span>Total Budget/Income:</span>
                 <span id="total-budget" style="color: #198754;">₱0</span>
             </div>
@@ -265,7 +269,7 @@
             <option value="budget">Add Budget / Income</option>
             <option value="expense">Deduct Expense</option>
         </select>
-        <input type="text" id="finance-desc" placeholder="Description (e.g. Ingredients, Starting Money)">
+        <input type="text" id="finance-desc" placeholder="Description (e.g. Ingredients, Extra Cash)">
         <input type="number" id="finance-amount" value="" min="1" placeholder="Amount (₱)">
         <button id="enter-finance-btn" class="action-btn">Save Record</button>
 
@@ -296,7 +300,6 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     
-    // Collections
     const salesCollection = collection(db, 'palitaw_sales');
     const financeCollection = collection(db, 'palitaw_finances');
 
@@ -349,7 +352,6 @@
             return;
         }
 
-        // Object to group items by date
         const groupedSales = {};
         const dateOrder = [];
 
@@ -357,15 +359,12 @@
             const sale = documentSnapshot.data();
             const docId = documentSnapshot.id;
             
-            // Overall totals
             if (counts[sale.item] !== undefined) counts[sale.item] += sale.quantity;
             totalItems += sale.quantity;
             
-            // Grouping by Date
             const dateObj = new Date(sale.timestamp);
             const dateKey = dateObj.toLocaleDateString(undefined, { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' });
             
-            // Determine price for this specific entry
             let entryPrice = 0;
             if (sale.item === "Plain Palitaw") entryPrice = sale.quantity * 5;
             if (sale.item === "Ube Palitaw with Cheese" || sale.item === "Palamig") entryPrice = sale.quantity * 10;
@@ -378,15 +377,12 @@
             groupedSales[dateKey].dailyTotal += entryPrice;
         });
 
-        // Render the grouped list
         dateOrder.forEach(date => {
-            // Date Header
             const header = document.createElement('div');
             header.className = 'date-header';
             header.innerHTML = `${date} <span class="date-total">₱${groupedSales[date].dailyTotal}</span>`;
             salesList.appendChild(header);
 
-            // Entries for that date
             groupedSales[date].list.forEach(sale => {
                 const div = document.createElement('div');
                 div.className = 'entry';
@@ -402,7 +398,6 @@
             });
         });
 
-        // Update overall displays
         document.getElementById('plain-total').innerText = counts["Plain Palitaw"];
         document.getElementById('ube-total').innerText = counts["Ube Palitaw with Cheese"];
         document.getElementById('palamig-total').innerText = counts["Palamig"];
@@ -427,7 +422,7 @@
                 await addDoc(financeCollection, { type: type, desc: desc, amount: amt, timestamp: Date.now() });
                 document.getElementById('finance-desc').value = "";
                 document.getElementById('finance-amount').value = "";
-            } catch (e) { alert("Error saving: " + e.message + ". Did you update Firestore rules?"); }
+            } catch (e) { alert("Error saving: " + e.message); }
             enterFinanceBtn.innerText = "Save Record";
         }
     });
@@ -439,6 +434,8 @@
         
         if (snapshot.empty) {
             financeList.innerHTML = '<div style="text-align:center; color:#adb5bd; padding:20px 0;">No records yet.</div>';
+            document.getElementById('total-budget').innerText = "₱0";
+            document.getElementById('total-expense').innerText = "₱0";
             document.getElementById('remaining-balance').innerText = "₱0";
             return;
         }
@@ -471,6 +468,7 @@
         document.getElementById('total-budget').innerText = "₱" + totalBudget;
         document.getElementById('total-expense').innerText = "₱" + totalExpense;
         
+        // Calculate remaining balance from entries ONLY (no fixed capital added here)
         const balance = totalBudget - totalExpense;
         const balanceEl = document.getElementById('remaining-balance');
         balanceEl.innerText = "₱" + balance;
@@ -491,3 +489,4 @@
 
 </body>
 </html>
+ 
