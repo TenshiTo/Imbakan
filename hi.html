@@ -185,11 +185,30 @@
         .view-section.active {
             display: block;
         }
+        
+        /* Login Screen */
+        #login-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-top: 50px;
+        }
     </style>
 </head>
 <body>
 
-<div class="container">
+<!-- ================= LOGIN SCREEN ================= -->
+<div class="container" id="login-box">
+    <h1>Security Check</h1>
+    <p style="text-align:center; font-size:14px; color:#6c757d; margin-bottom:20px;">Please enter the password to unlock the tracker.</p>
+    <input type="password" id="password-input" placeholder="Enter password" style="text-align: center;">
+    <button id="login-btn" class="action-btn">Unlock Tracker</button>
+    <div id="login-error" style="color:#dc3545; font-size:14px; display:none; text-align:center;">Incorrect password. Please try again.</div>
+</div>
+
+<!-- ================= MAIN APP ================= -->
+<div class="container" id="app-box" style="display: none;">
     
     <!-- Navigation Menu -->
     <div class="nav-menu">
@@ -197,7 +216,7 @@
         <button id="nav-budget">Budget & Expenses</button>
     </div>
 
-    <!-- ================= SALES TRACKER VIEW ================= -->
+    <!-- SALES TRACKER VIEW -->
     <div id="view-sales" class="view-section active">
         <h1>Sales Tracker</h1>
         
@@ -241,7 +260,7 @@
         </div>
     </div>
 
-    <!-- ================= BUDGET & EXPENSE VIEW ================= -->
+    <!-- BUDGET & EXPENSE VIEW -->
     <div id="view-budget" class="view-section">
         <h1>Budget & Expenses</h1>
         
@@ -284,6 +303,41 @@
 </div>
 
 <script type="module">
+    // === LOGIN SYSTEM ===
+    const CORRECT_PASSWORD = "palitawtaw"; // Password updated here
+    
+    const loginBox = document.getElementById('login-box');
+    const appBox = document.getElementById('app-box');
+    const loginBtn = document.getElementById('login-btn');
+    const passInput = document.getElementById('password-input');
+    const loginError = document.getElementById('login-error');
+
+    // Check if already logged in during this session
+    if (sessionStorage.getItem('isLoggedIn') === 'true') {
+        loginBox.style.display = 'none';
+        appBox.style.display = 'block';
+    }
+
+    loginBtn.addEventListener('click', () => {
+        // .toLowerCase() makes it so "Palitawtaw" or "PALITAWTAW" will both work
+        if (passInput.value.toLowerCase() === CORRECT_PASSWORD) {
+            sessionStorage.setItem('isLoggedIn', 'true');
+            loginBox.style.display = 'none';
+            appBox.style.display = 'block';
+        } else {
+            loginError.style.display = 'block';
+            passInput.value = '';
+        }
+    });
+
+    // Allow pressing "Enter" on the keyboard to login
+    passInput.addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') {
+            loginBtn.click();
+        }
+    });
+
+    // === FIREBASE & APP LOGIC ===
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
     import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
 
@@ -321,7 +375,6 @@
         viewBudget.classList.add('active');
         viewSales.classList.remove('active');
     });
-
 
     // === SALES TRACKER LOGIC ===
     const enterSaleBtn = document.getElementById('enter-sale-btn');
@@ -406,7 +459,6 @@
         document.getElementById('overall-price').innerText = "₱" + totalPrice;
     });
 
-
     // === BUDGET & EXPENSE LOGIC ===
     const enterFinanceBtn = document.getElementById('enter-finance-btn');
     const financeList = document.getElementById('finance-list');
@@ -468,7 +520,6 @@
         document.getElementById('total-budget').innerText = "₱" + totalBudget;
         document.getElementById('total-expense').innerText = "₱" + totalExpense;
         
-        // Calculate remaining balance from entries ONLY (no fixed capital added here)
         const balance = totalBudget - totalExpense;
         const balanceEl = document.getElementById('remaining-balance');
         balanceEl.innerText = "₱" + balance;
@@ -489,4 +540,3 @@
 
 </body>
 </html>
- 
